@@ -27,7 +27,7 @@ jobs:
       name: Sync action with S3
       if: ${{ github.event_name == 'push' }} && ${{ github.ref == 'refs/heads/main'}}
       steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl public-read --follow-symlinks --delete
