@@ -3,10 +3,9 @@
 # Unauthorized copying of this file, via any medium is strictly prohibited
 # Proprietary and confidential
 # Written by staff at Prediction Machine, April 2021
-# This file is an example of what a python file can look like
 ############################################################################################
 
-name: CI Workflow
+name: CI workflow
 on:
   push:
     branches:
@@ -24,7 +23,7 @@ on:
 jobs:
   sync-to-s3:
       runs-on: ubuntu-latest
-      name: Sync action with S3
+      name: Sync repo with S3
       if: ${{ github.event_name == 'push' }} && ${{ github.ref == 'refs/heads/main'}}
       steps:
       - uses: actions/checkout@master
@@ -35,7 +34,7 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'us-east-1'
+          AWS_REGION: ${{ secrets.AWS_REGION }}
           SOURCE_DIR: './'
           DEST_DIR: '${{ github.event.repository.name }}/main/'
 
@@ -102,8 +101,8 @@ jobs:
 
   build-test:
     runs-on: ubuntu-latest
-    name: 'Linting, Type check & Run test coverage'
-    if: ${{ github.event.repository.name != 'pm-gh-actions'}} && ${{ github.event_name == 'pull_request' }}
+    name: 'Linting, Type check & run test suit'
+    if: ${{ github.event.repository.name != 'pm-gh-actions' &&  github.event_name == 'pull_request' }}
     needs:
       - check-harcoded-credentials
     env:
@@ -115,10 +114,10 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Get standard template from PM standard repository
+      - name: Get standard template from pm-coding-template repo
         run: |
           git clone https://github.com/predictionmachine/pm-coding-template.git
-      - name: flake8 Lint check
+      - name: flake8 lint check
         uses: reviewdog/action-flake8@v3
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
@@ -129,7 +128,7 @@ jobs:
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           reporter: github-pr-review
-      - name: mypy Type check
+      - name: mypy type check
         uses: tsuyoshicho/action-mypy@v3
         with:
           github_token: '${{ secrets.github_token }}'
@@ -143,7 +142,7 @@ jobs:
       - name: Test with pytest
         run: |
           python -m pytest -c pm-coding-template/pytest.ini --continue-on-collection-errors --junit-xml test-results/pytest.xml
-      - name: Publish Unit Test Results
+      - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
@@ -152,7 +151,7 @@ jobs:
         run: |
           pytest --exitfirst --verbose --failed-first \
           --cov=test/ > pytest-coverage.txt
-      - name: Comment coverage
+      - name: Comment test coverage
         uses: coroo/pytest-coverage-commentator@v1.0.2
         with:
           pytest-coverage: pytest-coverage.txt
@@ -164,7 +163,7 @@ jobs:
           sed -i "${line_count}i"$'\n' docstring_report.txt
           sed -i '1d' docstring_report.txt
           sed -i "1i"$'Docstring Summary :memo:' docstring_report.txt
-      - name: Comment docstring report on PR
+      - name: Comment docstring report
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: docstring-comment
