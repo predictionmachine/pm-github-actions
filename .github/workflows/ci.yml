@@ -151,21 +151,3 @@ jobs:
           header: docstring-comment
           path: docstring_report.txt
 
-  push-to-ecr:
-    runs-on: ubuntu-latest
-    name: Build & Push to ECR
-    needs:
-      - build-test
-    steps:
-      - name: Check out code
-        if: ${{ github.event_name == 'push' }}
-        uses: actions/checkout@v2
-      - name: Build and Push to ECR
-        if: ${{ github.event_name == 'push' }}
-        uses: mr-smithers-excellent/docker-build-push@v5
-        with:
-          image: pm_images
-          registry: '131579175100.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com'
-        env:
-          AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}'
-          AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
