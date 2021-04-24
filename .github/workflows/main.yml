@@ -11,6 +11,7 @@ on:
   push:
     branches:
       - dev
+      - main
   pull_request:
     types:
       - opened
@@ -21,6 +22,22 @@ on:
       - main
       - dev
 jobs:
+  sync-to-s3:
+      runs-on: ubuntu-latest
+      name: Sync action with S3
+      if: ${{ github.event_name == 'push' }} && ${{ github.ref == 'refs/heads/main'}}
+      steps:
+      - uses: actions/checkout@master
+      - uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SOURCE_DIR: '.'
+          DEST_DIR: 'gh_main_action'
   enforce-pr-description:
     runs-on: ubuntu-latest
     name: 'Check PR description, fail if empty'
@@ -85,6 +102,7 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     name: 'Linting, Type check & Run test coverage'
+    if: ${{ github.event.repository.name != 'pm-gh-actions'}} && ${{ github.event_name == 'pull_request' }}
     needs:
       - check-harcoded-credentials
     env:
@@ -150,4 +168,3 @@ jobs:
         with:
           header: docstring-comment
           path: docstring_report.txt
-
