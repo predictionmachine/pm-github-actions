@@ -27,7 +27,6 @@ jobs:
       name: Sync action with S3
       if: ${{ github.event_name == 'push' }} && ${{ github.ref == 'refs/heads/main'}}
       steps:
-      - uses: actions/checkout@v2
       - uses: actions/checkout@master
       - uses: jakejarvis/s3-sync-action@master
         with:
@@ -39,6 +38,7 @@ jobs:
           AWS_REGION: 'us-east-1'
           SOURCE_DIR: './'
           DEST_DIR: '${{ github.event.repository.name }}/main/'
+
   enforce-pr-description:
     runs-on: ubuntu-latest
     name: 'Check PR description, fail if empty'
