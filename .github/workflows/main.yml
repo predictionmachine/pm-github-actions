@@ -59,7 +59,7 @@ jobs:
       - name: 'Check if file exists, and set flag'
         id: file_check
         run: |
-          file_count=`$(find ./ -type f \( -iname \*.zip -o -iname \*.parque \) | wc -l )`
+          file_count=$(find ./ -type f \( -iname \*.zip -o -iname \*.parque \) | wc -l )
           if [[ "$file_count==0" ]];then
             echo "No unwanted files found"
             exit 0
