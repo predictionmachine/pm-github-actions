@@ -75,8 +75,8 @@ jobs:
           header: file-check
           message: |
             👋 &nbsp; @${{ github.event.pull_request.user.login }}
-            Please unwwanted files from the repo.
-            Here is the path: ${{ steps.file_check.outputs.file_paths }}
+            Please remove unwanted files from the repo.
+            Here is the detected file path: ${{ steps.file_check.outputs.file_paths }}
             Please make sure you have followed our [contributing guidelines]($GUIDELINE_REPO).
 
   check-harcoded-credentials:
