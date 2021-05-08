@@ -148,7 +148,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: 6111e4d3e0e37e69d0142c9f9e57ecf88ff79b2718339e75ff30d946469c9b8e
         with:
-          coverageCommand: -t coverage.py
+          coverageCommand: coverage report
       - name: Check missing docstrings - interrogate
         id: docstring-check
         run: |
