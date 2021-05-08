@@ -54,4 +54,5 @@ In our case, `workflows: ["CI Workflow"]` -  "CI Workflow" is the workflow name 
 #### The GH action from marketplace used are:
 - [reviewdog](https://github.com/reviewdog) - for flake8, black, hard code credentials and mypy
 - [sticky-pull-request-comment](https://github.com/marocchino/sticky-pull-request-comment) - for PR comments.
-- [pytest-coverage-commentator](coroo/pytest-coverage-commentator) - for pytest coverage comments.
+- [paambaati/codeclimate-action](https://github.com/paambaati/codeclimate-action) - for code climate test coverage comments.
+- [EnricoMi/publish-unit-test-result-action](https://github.com/EnricoMi/publish-unit-test-result-action) - for unit test result comment.
