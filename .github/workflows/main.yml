@@ -1,0 +1,165 @@
+############################################################################################
+# Copyright (C) Prediction Machine Advisers, LLC - All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+# Written by staff at Prediction Machine, April 2021
+############################################################################################
+
+name: CI workflow
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+    branches:
+      - main
+      - dev
+jobs:
+
+  enforce-pr-description:
+    runs-on: ubuntu-latest
+    name: 'Check PR description, fail if empty'
+    env:
+      GUIDELINE_REPO: 'https://github.com/predictionmachine/pm-coding-template'
+      TEMPLATE_URL: 'https://github.com/predictionmachine/pm-coding-template/blob/main/PULL_REQUEST_TEMPLATE.md'
+    steps:
+      - name: Check PR description
+        if: ${{ github.event_name == 'pull_request' }}
+        id: getPrBody
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo ${PR_BODY:0:5}
+          if [ "${PR_BODY:0:5}" == "" ];then
+            echo "::set-output name=is_empty_body::true"
+          else
+            exit 0
+          fi
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ steps.getPrBody.outputs.is_empty_body == 'true' }}
+        with:
+          header: pr-check
+          message: |
+            👋 &nbsp; @${{ github.event.pull_request.user.login }}
+            Please use the PR template mentioned [here]($TEMPLATE_URL)
+            Please make sure you have followed our [contributing guidelines]($GUIDELINE_REPO).
+
+  check-unwanted-files:
+    runs-on: ubuntu-latest
+    name: Check for unwanted files - .zip etc.
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: 'Check if file exists, and set flag'
+        id: file_check
+        run: |
+          file_count=`$(find ./ -type f \( -iname \*.zip -o -iname \*.parque \) | wc -l )`
+          if [[ "$file_count==0" ]];then
+            echo "No unwanted files found"
+            exit 0
+          else
+            echo "::set-output name=is_unwanted_file::true"
+            echo "::set-output name=file_paths::$(find $PWD  -type f \( -iname \*.zip -o -iname \*.parque \))"
+            echo "Please remove unwanted files"
+            exit 0
+          fi
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ steps.file_check.outputs.is_unwanted_file == 'true' }}
+        with:
+          header: file-check
+          message: |
+            👋 &nbsp; @${{ github.event.pull_request.user.login }}
+            Please remove unwanted files from the repo.
+            Here is the detected file path: ${{ steps.file_check.outputs.file_paths }}
+            Please make sure you have followed our [contributing guidelines]($GUIDELINE_REPO).
+
+  check-harcoded-credentials:
+    runs-on: ubuntu-latest
+    name: Check hardcoded credentials in files
+    needs:
+      - check-unwanted-files
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: detect-secrets
+        uses: reviewdog/action-detect-secrets@master
+        with:
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          reporter: github-pr-review
+          fail_on_error: true
+
+  build-test:
+    runs-on: ubuntu-latest
+    name: 'Linting, Type check & run test suit'
+    if: ${{ github.event.repository.name != 'pm-gh-actions' &&  github.event_name == 'pull_request' }}
+    needs:
+      - check-harcoded-credentials
+    env:
+      COVERAGE_SINGLE: 60
+      COVERAGE_TOTAL: 60
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Get standard template from pm-coding-template repo
+        run: |
+          git clone https://github.com/predictionmachine/pm-coding-template.git
+      - name: flake8 lint check
+        uses: reviewdog/action-flake8@v3
+        with:
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          flake8_args: '--config=pm-coding-template/.flake8'
+          reporter: github-pr-review
+      - name: black formatting check
+        uses: reviewdog/action-black@v2
+        with:
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          reporter: github-pr-review
+      - name: mypy type check
+        uses: tsuyoshicho/action-mypy@v3
+        with:
+          github_token: '${{ secrets.github_token }}'
+          reporter: github-pr-review
+          mypy_flags: '--config-file=pm-coding-template/mypy.ini'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          cat pm-coding-template/requirements.txt >> requirements.txt
+          if [ requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Test with pytest
+        run: |
+          python -m pytest -c pm-coding-template/pytest.ini --continue-on-collection-errors --junit-xml test-results/pytest.xml
+      - name: Publish unit test results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: test-results/pytest.xml
+      - name: Build coverage file
+        run: |
+          pytest --exitfirst --verbose --failed-first \
+          --cov=test/ > pytest-coverage.txt
+      - name: Comment test coverage
+        uses: coroo/pytest-coverage-commentator@v1.0.2
+        with:
+          pytest-coverage: pytest-coverage.txt
+      - name: Check missing docstrings - interrogate
+        id: docstring-check
+        run: |
+          echo "$(python -m interrogate -v -i -I -m -M -n -e test/ -o docstring_report.txt .)"
+          line_count=$(wc -l < docstring_report.txt)
+          sed -i "${line_count}i"$'\n' docstring_report.txt
+          sed -i '1d' docstring_report.txt
+          sed -i "1i"$'Docstring Summary :memo:' docstring_report.txt
+      - name: Comment docstring report
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: docstring-comment
+          path: docstring_report.txt
