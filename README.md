@@ -1,6 +1,8 @@
 # pm-gh-actions
 Repository for common GitHub Actions workflows for Prediction Machine
 
+ - - -
+
 ### main.yml
 
 #### How it works:
@@ -13,12 +15,31 @@ Repository for common GitHub Actions workflows for Prediction Machine
    - Check for unwanted files - .zip etc.
    - Check hardcoded credentials in files.
    - Linting and type check - flake8, black, mypy
-   - Run test suit and generate result + test coverage
+   - Run test suit and generate result + test coverage (using code climate)
    - Check missing docstrings using.
    - The config file + the requirements.txt file used during the CI builds are fetched from [pm-coding-template](https://github.com/predictionmachine/pm-coding-template/) dynamically.
+
 **Note**: For above mentioned checks the `github-actions` bot will comment the respective issues/check fails.
 
-#### Few screenshots from the PR:
+### Things to remember:
+- Please make sure to replace `CC_TEST_REPORTER_ID` with your respective repo reporter id. (can find on code climate portal)
+- If you want to integrate `main.yml` to your repo then make sure to copy this file and move to `.github/workflows/` directory.
+- If you want to make conditional run (stage wise/sequential) for your existing workflow after a suceesful execution of `main.yml` workflow then include following yml code in your existing workflow file:
+
+```yaml
+on:
+ workflow_run:
+      workflows: ["CI Workflow"] # name of the workflow you want to execute after
+      types:
+        - completed
+```
+
+In our case, `workflows: ["CI Workflow"]` -  "CI Workflow" is the workflow name of main.yml.
+
+- - -
+
+### Few screenshots from the PR:
+
 - Empty PR Description check:
 ![empty-pr](docs/screenshots/empty-pr-comment.png?raw=true "Empty PR comment")
 - Black format check:
