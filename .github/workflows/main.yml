@@ -21,22 +21,6 @@ on:
       - main
       - dev
 jobs:
-  sync-to-s3:
-      runs-on: ubuntu-latest
-      name: Sync repo with S3
-      if: ${{ github.event_name == 'push' }} && ${{ github.ref == 'refs/heads/main'}}
-      steps:
-      - uses: actions/checkout@master
-      - uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --exclude '.git/*' --delete
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          SOURCE_DIR: './'
-          DEST_DIR: '${{ github.event.repository.name }}/main/'
 
   enforce-pr-description:
     runs-on: ubuntu-latest
@@ -73,16 +57,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: 'Check if file exists, and set flag'
-        id: check
+        id: file_check
         run: |
           file_count="$(find ./ -type f \( -iname \*.zip -o -iname \*.parque \) | wc -l )"
           if [[ $file_count==0 ]];then
             echo "No unwanted files found"
             exit 0
           else
+            echo "::set-output name=is_unwanted_file::true"
+            echo "::set-output name=file_paths::$(find $PWD  -type f \( -iname \*.zip -o -iname \*.parque \))"
             echo "Please remove unwanted files"
-            exit 1
+            exit 0
           fi
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ steps.file_check.outputs.is_unwanted_file == 'true' }}
+        with:
+          header: file-check
+          message: |
+            👋 &nbsp; @${{ github.event.pull_request.user.login }}
+            Please unwwanted files from the repo.
+            Here is the path: ${{ steps.file_check.outputs.file_paths }}
+            Please make sure you have followed our [contributing guidelines]($GUIDELINE_REPO).
 
   check-harcoded-credentials:
     runs-on: ubuntu-latest
