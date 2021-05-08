@@ -18,16 +18,17 @@ Repository for common GitHub Actions workflows for Prediction Machine
    - The config file + the requirements.txt file used during the CI builds are fetched from [pm-coding-template](https://github.com/predictionmachine/pm-coding-template/) dynamically.
 **Note**: For above mentioned checks the `github-actions` bot will comment the respective issues/check fails.
 
-#### Screenshots from the PR:
-
+#### Few screenshots from the PR:
+- Empty PR Description check:
 ![empty-pr](docs/screenshots/empty-pr-comment.png?raw=true "Empty PR comment")
-![Alt text](docs/screenshots/black-report.png?raw=true "black")
-![Alt text](docs/screenshots/docstring-report.png?raw=true "docstring")
-![Alt text](docs/screenshots/flake8-report.png?raw=true "flake8")
-![Alt text](docs/screenshots/mypy-report.png?raw=true "mypy")
-![Alt text](docs/screenshots/pytest-coverage-report.png?raw=true "pytest-cov")
-![Alt text](docs/screenshots/secrets_report.png?raw=true "secret-report")
-![Alt text](docs/screenshots/unit-test-res.png?raw=true "unit-test")
+- Black format check:
+![Alt text](docs/screenshots/black-report.png?raw=true "Black format")
+- flake8 checks
+![Alt text](docs/screenshots/flake8-report.png?raw=true "Flake8")
+- Hardcoded secret check:
+![Alt text](docs/screenshots/secrets_report.png?raw=true "Hardcoded secrets report")
+
+**(see more screenshots [here](/docs/screenshots))**
 
 #### The GH action from marketplace used are:
 - [reviewdog](https://github.com/reviewdog) - for flake8, black, hard code credentials and mypy
