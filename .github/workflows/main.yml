@@ -59,7 +59,7 @@ jobs:
       - name: 'Check if file exists, and set flag'
         id: file_check
         run: |
-          file_count=`$(find ./ -type f \( -iname \*.zip -o -iname \*.parque \) | wc -l )`
+          file_count=$(find ./ -type f \( -iname \*.zip -o -iname \*.parque \) | wc -l )
           if [[ "$file_count==0" ]];then
             echo "No unwanted files found"
             exit 0
@@ -96,8 +96,7 @@ jobs:
 
   build-test:
     runs-on: ubuntu-latest
-    name: 'Linting, Type check & run test suit'
-    if: ${{ github.event.repository.name != 'pm-gh-actions' &&  github.event_name == 'pull_request' }}
+    name: 'Linting, Type check & run test suite'
     needs:
       - check-harcoded-credentials
     env:
@@ -137,19 +136,20 @@ jobs:
       - name: Test with pytest
         run: |
           python -m pytest -c pm-coding-template/pytest.ini --continue-on-collection-errors --junit-xml test-results/pytest.xml
+          coverage run --source=test -m pytest
+          # coverage xml --omit=env/*,tests/*
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
           files: test-results/pytest.xml
-      - name: Build coverage file
-        run: |
-          pytest --exitfirst --verbose --failed-first \
-          --cov=test/ > pytest-coverage.txt
-      - name: Comment test coverage
-        uses: coroo/pytest-coverage-commentator@v1.0.2
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: 6111e4d3e0e37e69d0142c9f9e57ecf88ff79b2718339e75ff30d946469c9b8e
         with:
-          pytest-coverage: pytest-coverage.txt
+          coverageCommand: coverage report
+          coverageLocations: .
       - name: Check missing docstrings - interrogate
         id: docstring-check
         run: |
