@@ -57,7 +57,7 @@ Repository for common GitHub Actions workflows for Prediction Machine
 
 - - - 
 ## FAQ
-**Question:** Do I need to setup `GITHUB_TOKEN` in repo secret to run `main.yml`?
+**Question:** What's `GITHUB_TOKEN` and do I need to set it up to run `main.yml`?
 
 **Answer:** No. GitHub automatically creates a GITHUB_TOKEN secret to use in your workflow. You can use the `GITHUB_TOKEN` to authenticate in a workflow run.
 When you enable GitHub Actions, GitHub installs a GitHub App on your repository. The`GITHUB_TOKEN` secret is a GitHub App installation access token. You can use the installation access token to authenticate on behalf of the GitHub App installed on your repository. The token's permissions are limited to the repository that contains your workflow. Before each job begins, GitHub fetches an installation access token for the job. The token expires when the job is finished.
@@ -66,17 +66,17 @@ You can read more about this [here](https://docs.github.com/en/actions/reference
 ## 
 **Question:** Which configurations are being used for mypy, flake8 and other check in the workflow by default?
 
-**Answer:** This workflow uses the configuration files present in the [pm-coding-template](https://github.com/predictionmachine/pm-coding-template/) repo. The workflow run clones `pm-coding-template` the repo and uses the config files from it. If you need to use your configuration file then add the path of configuration file in the `main.yml` under the respective step, as a parameter.
+**Answer:** This workflow uses the configuration files present in the [pm-coding-template](https://github.com/predictionmachine/pm-coding-template/) repo. The workflow run clones `pm-coding-template` repo and uses the config files from it. If you need to use your configuration file then add the path of configuration file in the `main.yml` under the respective step, as a parameter.
 See the [installation instruction]("#Installation-instructions") to know more about it.
 
 ##
-**Question:** How can i add secrets to repo ad test them in workflow?
+**Question:** How can i add secrets to repo and test them in workflow?
 
 **Answer:** Secrets are encrypted environment variables that you create in an organization, repository, or repository environment. The secrets that you create are available to use in GitHub Actions workflows. You can read more about how to setup secrets in the repo [here](https://docs.github.com/en/actions/reference/encrypted-secrets)
 To use the secret in your workflow file you can simply use an expression: `${{ secrets.YOUR_SECRET_NAME }}` to evaluate your secret in workflow steps.
 
 ##
-**Question:** How can I execute both the workflows satge-wise/sequentially?
+**Question:** How can I execute an additional workflow after this workflow succeeds?
 
 **Answer:** If you want to make a conditional run (stage-wise/sequential) for your existing workflow after successful execution of `main.yml` workflow then include following yml code in your existing workflow file on top:
 
