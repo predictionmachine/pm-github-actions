@@ -15,29 +15,30 @@ Repository for common GitHub Actions workflows for Prediction Machine
    - Check for unwanted files - .zip etc.
    - Check hardcoded credentials in files.
    - Linting and type check - flake8, black, mypy
-   - Run test suit and generate result + test coverage (using code climate)
+   - Run test suit and generate result & test coverage using code climate)
    - Check missing docstrings using [interrogate](https://github.com/econchick/interrogate)
    - The config file and the requirements.txt file used during the CI builds are fetched from [pm-coding-template](https://github.com/predictionmachine/pm-coding-template/) dynamically.
 
-**Note**: For above-mentioned checks, the `github-actions` bot will comment the respective issues/check fails on PR.
+**Note**: For the above-mentioned checks, the `github-actions` bot will comment on the respective issues/check fails on PR.
 
 ### Installation instructions:
 
-- To use `main.yml` in your project repo, copy `main.yml` from this repo, and paste it in `.github/workflows/` folder of project repo.
-- Once you have copied the `main.yml` to `.github/workflows/`, please make sure to change the value of `CC_TEST_REPORTER_ID` ENV variable to your repo reporter id in `main.yml`. `CC_TEST_REPORTER_ID` is being used for reporting the test coverage to code climate.
+- To use `main.yml` in your project repo, copy `main.yml` from this repo, and paste it in the `.github/workflows/` folder of your project repo.
+- Once you have copied the `main.yml` to `.github/workflows/` folder, please make sure to change the value of `CC_TEST_REPORTER_ID` ENV variable to your repo specific reporter id in `main.yml`. `CC_TEST_REPORTER_ID` is being used for reporting the test coverage to code climate.
 - Each repo has a unique `CC_TEST_REPORTER_ID`, which can be obtained from repo setting page assuming that code climate is already configured for your repo.
-- Once the above steps are done you can run the workflow and test. You don't need to set up any other secrets like `GITHUB_TOKEN` for `main.yml` to work. (see FAQ)
-- If you need `main.yml` to use different configuration for for mypy, flake8, black and pytest then you can define then in the workflow file as bwlow:
-  - For mypy, replace the value of `mypy_flags: '--config-file=pm-coding-template/mypy.ini'` to your config file from the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/1be9b2cefc0f3f38614fca87d966feb4eeb4b2bb/.github/workflows/main.yml#L130)
-  - For flake8, replace the value of `flake8_args: '--config=pm-coding-template/.flake8'` to your config file from the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/1be9b2cefc0f3f38614fca87d966feb4eeb4b2bb/.github/workflows/main.yml#L118)
-  - For black configuration add the `black_args: '--config=path_to_your_configfile'`. This workflow uses default configuration provided by black.
+- Once the above steps are done you can run the workflow and test. You don't need to set up any other secrets like `GITHUB_TOKEN` for `main.yml` to work. [see FAQ]("#FAQ")
+- For coverage run, this workflow assumes `test` folder to be present in the repo else it will fail. If you want to add different folder for coverage then you need to edit this `coverage run --source=test -m pytest` command in `main.yml` [here](https://github.com/predictionmachine/pm-docker-images/blob/cf4df6bfc1c6b5b630b8d9a7fcde08a639e4c8db/.github/workflows/ci.yml#L139) and replace `test` with your folder name.
+- If you need `main.yml` to use different configuration files for mypy, flake8, black and pytest, then you can define them in the workflow file as below:
+  - For mypy, replace the value of `mypy_flags: '--config-file=pm-coding-template/mypy.ini'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/1be9b2cefc0f3f38614fca87d966feb4eeb4b2bb/.github/workflows/main.yml#L130)
+  - For flake8, replace the value of `flake8_args: '--config=pm-coding-template/.flake8'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/1be9b2cefc0f3f38614fca87d966feb4eeb4b2bb/.github/workflows/main.yml#L118)
+  - For black configuration add the `black_args: '--config=path_to_your_configfile'` in `main.yml` under `with` [tag](https://github.com/predictionmachine/pm-docker-images/blob/cf4df6bfc1c6b5b630b8d9a7fcde08a639e4c8db/.github/workflows/ci.yml#L122). This workflow uses default configuration provided by black.
   - For pytest, you need to add configuration file path to [this](https://github.com/predictionmachine/pm-gh-actions/blob/1be9b2cefc0f3f38614fca87d966feb4eeb4b2bb/.github/workflows/main.yml#L138) command in `main.yml` file.
 - Please see FAQ section if you have any questions, feel free to raise an issue if you don't find an answer to your question.
 - - -
 
 ### Few screenshots from the PR:
 
-- Empty PR Description check:
+- Empty PR description check:
 ![empty-pr](docs/screenshots/empty-pr-comment.png?raw=true "Empty PR comment")
 - Black format check:
 ![Alt text](docs/screenshots/black-report.png?raw=true "Black format")
@@ -56,17 +57,17 @@ Repository for common GitHub Actions workflows for Prediction Machine
 
 - - - 
 ## FAQ
-**Question:** Do i need to setup `GITHUB_TOKEN` in repo secret? it's being used in `main.yml`
+**Question:** Do I need to setup `GITHUB_TOKEN` in repo secret to run `main.yml`?
 
 **Answer:** No. GitHub automatically creates a GITHUB_TOKEN secret to use in your workflow. You can use the `GITHUB_TOKEN` to authenticate in a workflow run.
 When you enable GitHub Actions, GitHub installs a GitHub App on your repository. The`GITHUB_TOKEN` secret is a GitHub App installation access token. You can use the installation access token to authenticate on behalf of the GitHub App installed on your repository. The token's permissions are limited to the repository that contains your workflow. Before each job begins, GitHub fetches an installation access token for the job. The token expires when the job is finished.
 You can read more about this [here](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
 
 ## 
-**Question:** Which configurations are being used for mypy, flake8 and other check in the workflow?
+**Question:** Which configurations are being used for mypy, flake8 and other check in the workflow by default?
 
 **Answer:** This workflow uses the configuration files present in the [pm-coding-template](https://github.com/predictionmachine/pm-coding-template/) repo. The workflow run clones `pm-coding-template` the repo and uses the config files from it. If you need to use your configuration file then add the path of configuration file in the `main.yml` under the respective step, as a parameter.
-See the installation instruction to know more about it.
+See the [installation instruction]("#Installation-instructions") to know more about it.
 
 ##
 **Question:** How can i add secrets to repo ad test them in workflow?
@@ -75,9 +76,9 @@ See the installation instruction to know more about it.
 To use the secret in your workflow file you can simply use an expression: `${{ secrets.YOUR_SECRET_NAME }}` to evaluate your secret in workflow steps.
 
 ##
-**Question:** How can I execute both the workflow satge-wise/sequentially?
+**Question:** How can I execute both the workflows satge-wise/sequentially?
 
-**Answer:** If you want to make a conditional run (stage-wise/sequential) for your existing workflow after successful execution of `main.yml` workflow then include following yml code in your existing workflow file:
+**Answer:** If you want to make a conditional run (stage-wise/sequential) for your existing workflow after successful execution of `main.yml` workflow then include following yml code in your existing workflow file on top:
 
     ```yaml
     on:
