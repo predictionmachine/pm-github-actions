@@ -137,7 +137,7 @@ jobs:
         run: |
           python -m pytest -c pm-coding-template/pytest.ini --continue-on-collection-errors --junit-xml test-results/pytest.xml
           coverage run --source=test -m pytest
-          # coverage xml --omit=env/*,tests/*
+          coverage xml -o coverage.xml
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
@@ -149,7 +149,6 @@ jobs:
           CC_TEST_REPORTER_ID: 6111e4d3e0e37e69d0142c9f9e57ecf88ff79b2718339e75ff30d946469c9b8e
         with:
           coverageCommand: coverage report
-          coverageLocations: .
       - name: Check missing docstrings - interrogate
         id: docstring-check
         run: |
