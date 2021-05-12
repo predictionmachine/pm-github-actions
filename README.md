@@ -1,13 +1,9 @@
 # pm-gh-actions
-<<<<<<< HEAD
+
 Repository for sanity checking and nicely commenting on pull requests for python repositories.
 Provides a GitHub Actions workflow file which you can customize. By default, assumes you are a fan of
 `black` (for layout), `flake8` for further pip8 conformance, `mypy` for typechecking, and `pytest` and _codeclimate quality_ for testing and coverage.
 Developed and used by _Prediction Machine_.
-=======
-
-Repository for common GitHub Actions workflows for Prediction Machine
->>>>>>> 884c046 (Fix markdown linting in readme)
 
  - - -
 
@@ -31,15 +27,15 @@ Repository for common GitHub Actions workflows for Prediction Machine
 
 ### Installation instructions:
 
-- To use `main.yml` in your project repo, copy `main.yml` from this repo, and paste it in the `.github/workflows/` folder of your project repo.
-- Once you have copied the `main.yml` to `.github/workflows/` folder, set the value of `CC_TEST_REPORTER_ID` in `main.yml`. The value is used for reporting the test coverage to code climate, to your repo specific reporter id. See [finding your test coverage token](https://docs.codeclimate.com/docs/finding-your-test-coverage-token) for obtaining the id.
-- Once the above steps are done you can run the workflow and test. You don't need to set up any other secrets like `GITHUB_TOKEN` for `main.yml` to work.
-- For coverage run, this workflow assumes `test` folder to be present in the repo else it will fail. If you want to add different folder for coverage then you need to edit this `coverage run --source=test -m pytest` command in `main.yml` [here](https://github.com/predictionmachine/pm-docker-images/blob/cf4df6bfc1c6b5b630b8d9a7fcde08a639e4c8db/.github/workflows/ci.yml#L139) and replace `test` with your folder name.
-- If you need `main.yml` to use different configuration files for mypy, flake8, black and pytest, then you can define them in the workflow file as below:
-  - For mypy, replace the value of `mypy_flags: '--config-file=pm-coding-template/mypy.ini'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/1be9b2cefc0f3f38614fca87d966feb4eeb4b2bb/.github/workflows/main.yml#L130)
-  - For flake8, replace the value of `flake8_args: '--config=pm-coding-template/.flake8'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/1be9b2cefc0f3f38614fca87d966feb4eeb4b2bb/.github/workflows/main.yml#L118)
-  - For black configuration add the `black_args: '--config=path_to_your_configfile'` in `main.yml` under `with` [tag](https://github.com/predictionmachine/pm-docker-images/blob/cf4df6bfc1c6b5b630b8d9a7fcde08a639e4c8db/.github/workflows/ci.yml#L122). This workflow uses default configuration provided by black.
-  - For pytest, you need to add configuration file path to [this](https://github.com/predictionmachine/pm-gh-actions/blob/1be9b2cefc0f3f38614fca87d966feb4eeb4b2bb/.github/workflows/main.yml#L138) command in `main.yml` file.
+- To use [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) in your project repo, copy [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) from this repo, and paste it in the `.github/workflows/` folder of your project repo.
+- Once you have copied the [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) to `.github/workflows/` folder, set the value of `CC_TEST_REPORTER_ID` in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml). The value is used for reporting the test coverage to code climate, to your repo specific reporter id. See [finding your test coverage token](https://docs.codeclimate.com/docs/finding-your-test-coverage-token) for obtaining the id.
+- Once the above steps are done you can run the workflow and test. You don't need to set up any other secrets like `GITHUB_TOKEN` for [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) to work.
+- For coverage run, this workflow assumes `test` folder to be present in the repo else it will fail. If you want to add different folder for coverage then you need to edit this `coverage run --source=test -m pytest` command in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) [here](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.ym#L139) and replace `test` with your folder name.
+- If you need [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) to use different configuration files for mypy, flake8, black and pytest, then you can define them in the workflow file as below:
+  - For mypy, replace the value of `mypy_flags: '--config-file=pm-coding-template/mypy.ini'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L130)
+  - For flake8, replace the value of `flake8_args: '--config=pm-coding-template/.flake8'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions#L118)
+  - For black configuration add the `black_args: '--config=path_to_your_configfile'` in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) under `with` [tag](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L122). This workflow uses default configuration provided by black.
+  - For pytest, you need to add configuration file path to [this](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L138) command in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) file.
 - Please see FAQ section if you have any questions, feel free to raise an issue if you don't find an answer to your question.
 
 - - -
@@ -58,6 +54,7 @@ Repository for common GitHub Actions workflows for Prediction Machine
 **(see more screenshots [here](/docs/screenshots))**
 
 #### The GH action from marketplace used are:
+
 - [reviewdog](https://github.com/reviewdog) - for flake8, black, hard code credentials and mypy
 - [sticky-pull-request-comment](https://github.com/marocchino/sticky-pull-request-comment) - for PR comments.
 - [paambaati/codeclimate-action](https://github.com/paambaati/codeclimate-action) - for code climate test coverage comments.
