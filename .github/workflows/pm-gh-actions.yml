@@ -27,7 +27,7 @@ jobs:
     name: 'Check PR description, fail if empty'
     env:
       GUIDELINE_REPO: 'https://github.com/predictionmachine/pm-coding-template'
-      TEMPLATE_URL: 'https://github.com/predictionmachine/pm-coding-template/blob/main/PULL_REQUEST_TEMPLATE.md'
+      TEMPLATE_URL: 'https://github.com/predictionmachine/pm-coding-template/blob/main/.github/pull_request_template.md'
     steps:
       - name: Check PR description
         if: ${{ github.event_name == 'pull_request' }}
@@ -38,17 +38,20 @@ jobs:
           echo ${PR_BODY:0:5}
           if [ "${PR_BODY:0:5}" == "" ];then
             echo "::set-output name=is_empty_body::true"
-          else
-            exit 0
           fi
       - uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ steps.getPrBody.outputs.is_empty_body == 'true' }}
         with:
-          header: pr-check
+          header: pr-empty-comments
           message: |
             👋 &nbsp; @${{ github.event.pull_request.user.login }}
-            Please use the PR template mentioned [here]($TEMPLATE_URL)
-            Please make sure you have followed our [contributing guidelines]($GUIDELINE_REPO).
+            Please use the PR template mentioned [here](${{ env.TEMPLATE_URL }})
+            Please make sure you have followed our [contributing guidelines](${{ env.GUIDELINE_REPO }}).
+      - name: Exit the job for empty PR description
+        if: ${{ steps.getPrBody.outputs.is_empty_body == 'true' }}
+        run: |
+          echo "Failed due to empty PR description"
+          exit 1
 
   check-unwanted-files:
     runs-on: ubuntu-latest
