@@ -125,7 +125,7 @@ jobs:
       - name: mypy type check
         uses: tsuyoshicho/action-mypy@v3
         with:
-          github_token: '${{ secrets.github_token }}'
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
           reporter: github-pr-review
           mypy_flags: '--config-file=pm-coding-template/mypy.ini'
       - name: Install dependencies
@@ -146,7 +146,7 @@ jobs:
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.7.5
         env:
-          CC_TEST_REPORTER_ID: 6111e4d3e0e37e69d0142c9f9e57ecf88ff79b2718339e75ff30d946469c9b8e
+          CC_TEST_REPORTER_ID: '${{ secrets.CC_TEST_REPORTER_ID }}'
         with:
           coverageCommand: coverage report
       - name: Check missing docstrings - interrogate
