@@ -6,7 +6,7 @@ Developed and used by _Prediction Machine_.
 
  - - -
 
-## main.yml
+## [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml)
 
 #### How it works:
 
@@ -57,18 +57,18 @@ Developed and used by _Prediction Machine_.
 - [paambaati/codeclimate-action](https://github.com/paambaati/codeclimate-action) - for code climate test coverage comments.
 - [EnricoMi/publish-unit-test-result-action](https://github.com/EnricoMi/publish-unit-test-result-action) - for unit test result comment.
 
-- - - 
+- - -
 ## FAQ
-**Question:** What's `GITHUB_TOKEN` and do I need to set it up to run `main.yml`?
+**Question:** What's `GITHUB_TOKEN` and do I need to set it up to run `pm-gh-actions.yml`?
 
 **Answer:** No. GitHub automatically creates a GITHUB_TOKEN secret to use in your workflow. You can use the `GITHUB_TOKEN` to authenticate in a workflow run.
 When you enable GitHub Actions, GitHub installs a GitHub App on your repository. The`GITHUB_TOKEN` secret is a GitHub App installation access token. You can use the installation access token to authenticate on behalf of the GitHub App installed on your repository. The token's permissions are limited to the repository that contains your workflow. Before each job begins, GitHub fetches an installation access token for the job. The token expires when the job is finished.
 You can read more about this [here](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
 
-## 
+##
 **Question:** Which configurations are being used for mypy, flake8 and other check in the workflow by default?
 
-**Answer:** This workflow uses the configuration files present in the [pm-coding-template](https://github.com/predictionmachine/pm-coding-template/) repo. The workflow run clones `pm-coding-template` repo and uses the config files from it. If you need to use your configuration file then add the path of configuration file in the `main.yml` under the respective step, as a parameter.
+**Answer:** This workflow uses the configuration files present in the [pm-coding-template](https://github.com/predictionmachine/pm-coding-template/) repo. The workflow run clones `pm-coding-template` repo and uses the config files from it. If you need to use your configuration file then add the path of configuration file in the `pm-gh-actions.yml` under the respective step, as a parameter.
 See the [installation instruction]("#Installation-instructions") to know more about it.
 
 ##
@@ -80,7 +80,7 @@ To use the secret in your workflow file you can simply use an expression: `${{ s
 ##
 **Question:** How can I execute an additional workflow after this workflow succeeds?
 
-**Answer:** If you want to make a conditional run (stage-wise/sequential) for your existing workflow after successful execution of `main.yml` workflow then include following yml code in your existing workflow file on top:
+**Answer:** If you want to make a conditional run (stage-wise/sequential) for your existing workflow after successful execution of `pm-gh-actions.yml` workflow then include following yml code in your existing workflow file on top:
 
     ```yaml
     on:
@@ -90,5 +90,4 @@ To use the secret in your workflow file you can simply use an expression: `${{ s
             - completed
     ```
 
- In our case, `workflows: ["CI Workflow"]` -  "CI Workflow" is the workflow name of `main.yml`
-
+ In our case, `workflows: ["CI Workflow"]` -  "CI Workflow" is the workflow name of [`pm-gh-actions.yml`](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L8)
