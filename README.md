@@ -1,5 +1,8 @@
 # pm-gh-actions
-Repository for common GitHub Actions workflows for Prediction Machine
+Repository for sanity checking and nicely commenting on pull requests for python repositories.
+Provides a GitHub Actions workflow file which you can customize. By default, assumes you are a fan of
+`black` (for layout), `flake8` for further pip8 conformance, `mypy` for typechecking, and `pytest` and _codeclimate quality_ for testing and coverage.
+Developed and used by _Prediction Machine_.
 
  - - -
 
@@ -24,9 +27,8 @@ Repository for common GitHub Actions workflows for Prediction Machine
 ### Installation instructions:
 
 - To use `main.yml` in your project repo, copy `main.yml` from this repo, and paste it in the `.github/workflows/` folder of your project repo.
-- Once you have copied the `main.yml` to `.github/workflows/` folder, please make sure to change the value of `CC_TEST_REPORTER_ID` ENV variable to your repo specific reporter id in `main.yml`. `CC_TEST_REPORTER_ID` is being used for reporting the test coverage to code climate.
-- Each repo has a unique `CC_TEST_REPORTER_ID`, which can be obtained from repo setting page assuming that code climate is already configured for your repo.
-- Once the above steps are done you can run the workflow and test. You don't need to set up any other secrets like `GITHUB_TOKEN` for `main.yml` to work. [see FAQ]("#FAQ")
+- Once you have copied the `main.yml` to `.github/workflows/` folder, set the value of `CC_TEST_REPORTER_ID` in `main.yml`. The value is used for reporting the test coverage to code climate, to your repo specific reporter id. See [finding your test coverage token](https://docs.codeclimate.com/docs/finding-your-test-coverage-token) for obtaining the id.
+- Once the above steps are done you can run the workflow and test. You don't need to set up any other secrets like `GITHUB_TOKEN` for `main.yml` to work.
 - For coverage run, this workflow assumes `test` folder to be present in the repo else it will fail. If you want to add different folder for coverage then you need to edit this `coverage run --source=test -m pytest` command in `main.yml` [here](https://github.com/predictionmachine/pm-docker-images/blob/cf4df6bfc1c6b5b630b8d9a7fcde08a639e4c8db/.github/workflows/ci.yml#L139) and replace `test` with your folder name.
 - If you need `main.yml` to use different configuration files for mypy, flake8, black and pytest, then you can define them in the workflow file as below:
   - For mypy, replace the value of `mypy_flags: '--config-file=pm-coding-template/mypy.ini'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/1be9b2cefc0f3f38614fca87d966feb4eeb4b2bb/.github/workflows/main.yml#L130)
