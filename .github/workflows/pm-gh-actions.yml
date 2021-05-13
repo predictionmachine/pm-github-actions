@@ -103,8 +103,7 @@ jobs:
     needs:
       - check-harcoded-credentials
     env:
-      COVERAGE_SINGLE: 60
-      COVERAGE_TOTAL: 60
+      MIN_DOC_COV: 100.0
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
@@ -155,23 +154,25 @@ jobs:
         with:
           coverageCommand: coverage report
       - name: Check missing docstrings - interrogate
-        id: docstring-check
+        id: docstringCheck
         env:
           REPORT_PATH: docstring_report.txt
         run: |
-          echo "$(python -m interrogate --verbose --ignore-init-method --ignore-init-module --ignore-magic \
-            --ignore-nested-functions --exclude tests/ --exclude pm-coding-template/ -o "$REPORT_PATH" .)"
+          echo "$(python -m interrogate -c setup.cfg -o "$REPORT_PATH" .)"
+          total_cov=$(grep -o 'actual: [0-9].[0-9]' docstring_report.txt | sed 's/actual\://')
+          echo "::set-output name=total_cov::$total_cov"
           line_count=$(wc -l < "$REPORT_PATH")
-          sed -i "${line_count}i"$'\n' "$REPORT_PATH"
-          sed -i '1d' "$REPORT_PATH"
-          sed -i "1i"$'## Docstring Summary :memo:' "$REPORT_PATH"
+          sed -i "${line_count}i"$'\n' "$REPORT_PATH" #insert a newline after total row.
+          sed -i '1d' "$REPORT_PATH" #delete the 1st line from the report, which is a coverage path.
+          sed -i "1i"$'## Docstring Summary :memo:' "$REPORT_PATH" #insert a title on 1st line, for the PR comment.
       - name: Comment docstring report
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: docstring-comment
           path: docstring_report.txt
-      - name: Comment docstring report
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: docstring-comment
-          path: docstring_report.txt
+      - name: Exit the job for less docstring coverage in a codebase
+        if: ${{ steps.docstringCheck.outputs.total_cov < env.MIN_DOC_COV }}
+        run: |
+          echo "Failed because of less docstring coverage"
+          echo "Expected coverage is ${{ env.MIN_DOC_COV }}, actual coverage is ${{ steps.docstringCheck.outputs.total_cov }}"
+          exit 1
