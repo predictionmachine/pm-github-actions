@@ -103,7 +103,7 @@ jobs:
     needs:
       - check-harcoded-credentials
     env:
-      MIN_DOC_COV: 100.0
+      MIN_DOC_COV: 100
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
