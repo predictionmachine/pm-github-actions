@@ -155,7 +155,7 @@ jobs:
           REPORT_PATH: output/docstring_report.txt
         run: |
           echo "$(python -m interrogate -c pyproject.toml -o "$REPORT_PATH" .)"
-          cov_val=$(grep -o 'actual: [0-9].[0-9]' docstring_report.txt | sed 's/actual\://')
+          cov_val=$(grep -o 'actual: [0-9].[0-9]' output/docstring_report.txt | sed 's/actual\://')
           total_cov=$(echo "$cov_val" | bc)
           echo "::set-output name=total_cov::$total_cov"
           line_count=$(wc -l < "$REPORT_PATH")
