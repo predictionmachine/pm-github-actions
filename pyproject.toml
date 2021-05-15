@@ -1,6 +1,9 @@
+[tool.black]
+# your black config goes here
+
 [tool.interrogate]
 ignore-init-method = true
-ignore-init-module = false
+ignore-init-module = true
 ignore-magic = true
 fail-under = 100
 exclude = ["tests"]
@@ -23,7 +26,3 @@ filterwarnings = [
     'ignore:"@coroutine" decorator:DeprecationWarning',
     'ignore:The loop argument:DeprecationWarning'
 ]
-
-
-[tool.black]
-# your black config goes here
