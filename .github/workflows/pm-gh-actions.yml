@@ -110,14 +110,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Get standard template from pm-coding-template repo
-        run: |
-          git clone https://github.com/predictionmachine/pm-coding-template.git
       - name: flake8 lint check
         uses: reviewdog/action-flake8@v3
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
-          flake8_args: '--config=pm-coding-template/.flake8'
+          flake8_args: '--config=setup.cfg'
           reporter: github-pr-review
       - name: black formatting check
         uses: reviewdog/action-black@v2
@@ -129,18 +126,15 @@ jobs:
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           reporter: github-pr-review
-          mypy_flags: '--config-file=pm-coding-template/mypy.ini'
+          mypy_flags: '--config-file=setup.cfg'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          cat pm-coding-template/requirements.txt >> requirements.txt
-          if [ requirements.txt ]; then pip install -r requirements.txt; fi
-          cat pm-coding-template/requirements-dev.txt >> requirements-dev.txt
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: Test with pytest
         run: |
-          python -m pytest -c pm-coding-template/pytest.ini --continue-on-collection-errors --junit-xml test-results/pytest.xml
-          coverage run --source=test -m pytest
+          python -m pytest --continue-on-collection-errors --junit-xml test-results/pytest.xml
+          coverage run --source=tests -m pytest
           coverage xml -o coverage.xml
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v1
