@@ -1,0 +1,29 @@
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = false
+ignore-magic = true
+fail-under = 100
+exclude = ["tests"]
+verbose = 1
+quiet = false
+color = true
+ignore-nested-functions = true
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers -vv"
+markers = [
+    'integration: integration tests'
+]
+doctest_optionflags = ['NORMALIZE_WHITESPACE', 'IGNORE_EXCEPTION_DETAIL']
+log_format = '%(asctime)s.%(msecs)03d [%(levelname)s] %(filename)12s:%(lineno)d fn=%(funcName)s	%(message)s'
+log_date_format = '%Y-%m-%dT%H:%M:%S'
+log_level = 'INFO'
+log_cli_level = 'INFO'
+filterwarnings = [
+    'ignore:"@coroutine" decorator:DeprecationWarning',
+    'ignore:The loop argument:DeprecationWarning'
+]
+
+
+[tool.black]
+# your black config goes here
