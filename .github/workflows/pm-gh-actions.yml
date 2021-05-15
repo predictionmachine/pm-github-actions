@@ -152,8 +152,9 @@ jobs:
         env:
           REPORT_PATH: docstring_report.txt
         run: |
-          echo "$(python -m interrogate -c setup.cfg -o "$REPORT_PATH" .)"
-          total_cov=$(grep -o 'actual: [0-9].[0-9]' docstring_report.txt | sed 's/actual\://')
+          echo "$(python -m interrogate -c pyproject.toml -o "$REPORT_PATH" .)"
+          cov_val=$(grep -o 'actual: [0-9].[0-9]' docstring_report.txt | sed 's/actual\://')
+          total_cov=$(echo "$cov_val" | bc)
           echo "::set-output name=total_cov::$total_cov"
           line_count=$(wc -l < "$REPORT_PATH")
           sed -i "${line_count}i"$'\n' "$REPORT_PATH" #insert a newline after total row.
