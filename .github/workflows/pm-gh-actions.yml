@@ -189,12 +189,18 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements**.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: Test with pytest
         run: |
           python -m pytest --continue-on-collection-errors --junit-xml $PYTEST_OUTPUT_PATH
           coverage run --source=tests -m pytest # run coverage
           coverage xml -o "${{ env.COVERAGE_OUTPUT_PATH }}" # generate coverage file
             # see https://github.com/codecov/codecov-action
+      # HANDLE COVERAGE
       - name: Upload codecov report
         uses: codecov/codecov-action@v1
         with:
