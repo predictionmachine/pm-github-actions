@@ -85,8 +85,6 @@ jobs:
   check-harcoded-credentials:
     runs-on: ubuntu-latest
     name: Check hardcoded credentials in files
-    needs:
-      - check-unwanted-files
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -97,79 +95,126 @@ jobs:
           reporter: github-pr-review
           fail_on_error: true
 
-  build-test:
+  linting:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
-    name: 'Linting, Type check & run test suite'
-    needs:
-      - check-harcoded-credentials
+    name: 'Linting: black, flake8, docstrings interrogate'
     env:
       MIN_DOC_COV: 100
+      DOCSTRING_REPORT: output/docstring_report.txt
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
+      - name: black formatting check
+        uses: reviewdog/action-black@v2
+        with:
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          black_args: '--config=pyproject.toml'
+          reporter: github-pr-review
+          fail_on_error: true
       - name: flake8 lint check
         uses: reviewdog/action-flake8@v3
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           flake8_args: '--config=setup.cfg'
           reporter: github-pr-review
-      - name: black formatting check
-        uses: reviewdog/action-black@v2
+          fail_on_error: true
+      - name: Create output directory for reports
+        run: mkdir -p output # for docstring report
+      - name: Check missing docstrings - interrogate
+        id: docstringCheck
+        env:
+          REPORT_PATH: output/docstring_report.txt
+        run: |
+          echo "$(python -m interrogate -c pyproject.toml -o "$DOCSTRING_REPORT" .)"
+          cov_val=$(grep -o 'actual: [0-9.]*' $DOCSTRING_REPORT | sed 's/actual: //')
+          total_cov=$(echo "$cov_val" | bc)
+          echo "::set-output name=total_cov::$total_cov"
+          line_count=$(wc -l < "$DOCSTRING_REPORT")
+          sed -i "${line_count}i"$'\n' "$DOCSTRING_REPORT" # insert a newline after total row.
+          sed -i '1d' "$DOCSTRING_REPORT" # delete the 1st line from the report, which is a coverage path.
+          sed -i "1i"$'## Docstring Summary :memo:' "$DOCSTRING_REPORT" # insert a title on 1st line, for the PR comment.
+      - name: Post docstring report as PR comments
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          github_token: '${{ secrets.GITHUB_TOKEN }}'
-          reporter: github-pr-review
-          black_args: '--config=pyproject.toml'
+          header: docstring-comment
+          path: ${{ env.DOCSTRING_REPORT }}
+      - name: Exit the job for less docstring coverage in a codebase
+        if: ${{ steps.docstringCheck.outputs.total_cov < env.MIN_DOC_COV }}
+        run: |
+          echo "Failed because of less docstring coverage"
+          echo "Expected coverage is $MIN_DOC_COV, actual coverage is ${{ steps.docstringCheck.outputs.total_cov }}"
+          exit 1
+
+  mypy-typecheck:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    name: 'Mypy Type check'
+    steps:
       - name: mypy type check
         uses: tsuyoshicho/action-mypy@v3
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           reporter: github-pr-review
           mypy_flags: '--config-file=setup.cfg'
+
+  test-and-coverage:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    name: 'Pytest and Coverage'
+    env:
+      MIN_DOC_COV: 100
+      COVERAGE_OUTPUT_PATH: output/coverage.xml
+      PYTEST_OUTPUT_PATH: output/pytest.xml
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Use cache if possible
+        # see [cache](https://github.com/actions/cache) and
+        # [pip example](https://github.com/actions/cache/blob/master/examples.md#simple-example))
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements**.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          if [ requirements.txt ]; then pip install -r requirements.txt; fi
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: Test with pytest
         run: |
-          python -m pytest --continue-on-collection-errors --junit-xml output/pytest.xml
+          pytest --continue-on-collection-errors --junit-xml $PYTEST_OUTPUT_PATH
           coverage run --source=tests -m pytest
-          coverage xml -o output/coverage.xml
-      - name: Publish unit test results
+          coverage xml -o "${{ env.COVERAGE_OUTPUT_PATH }}"
+            # see https://github.com/codecov/codecov-action
+      - name: Upload codecov report
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ env.COVERAGE_OUTPUT_PATH }}
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
+      - name: Show unit test results
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
-          files: output/pytest.xml
-      - name: Test & publish code coverage
+          files: ${{ env.PYTEST_OUTPUT_PATH }}
+      - name: Upload code coverage to codeclimate
         uses: paambaati/codeclimate-action@v2.7.5
         env:
+          # see https://docs.codeclimate.com/docs/finding-your-test-coverage-token
+          # get from https://codeclimate.com/repos/6094b3d1a32d9010d700292e/settings/test_reporter
           CC_TEST_REPORTER_ID: '${{ secrets.CC_TEST_REPORTER_ID }}'
         with:
           coverageCommand: coverage report
-          coverageLocations: output/coverage.xml
-      - name: Check missing docstrings - interrogate
-        id: docstringCheck
-        env:
-          REPORT_PATH: output/docstring_report.txt
-        run: |
-          echo "$(python -m interrogate -c pyproject.toml -o "$REPORT_PATH" .)"
-          cov_val=$(grep -o 'actual: [0-9].[0-9]' output/docstring_report.txt | sed 's/actual\://')
-          total_cov=$(echo "$cov_val" | bc)
-          echo "::set-output name=total_cov::$total_cov"
-          line_count=$(wc -l < "$REPORT_PATH")
-          sed -i "${line_count}i"$'\n' "$REPORT_PATH" #insert a newline after total row.
-          sed -i '1d' "$REPORT_PATH" #delete the 1st line from the report, which is a coverage path.
-          sed -i "1i"$'## Docstring Summary :memo:' "$REPORT_PATH" #insert a title on 1st line, for the PR comment.
-      - name: Comment docstring report
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: docstring-comment
-          path: output/docstring_report.txt
-      - name: Exit the job for less docstring coverage in a codebase
-        if: ${{ steps.docstringCheck.outputs.total_cov < env.MIN_DOC_COV }}
-        run: |
-          echo "Failed because of less docstring coverage"
-          echo "Expected coverage is ${{ env.MIN_DOC_COV }}, actual coverage is ${{ steps.docstringCheck.outputs.total_cov }}"
-          exit 1
+          coverageLocations: ${{ env.COVERAGE_OUTPUT_PATH }}
+
