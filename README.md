@@ -110,7 +110,7 @@ You can read more about this [here](https://docs.github.com/en/actions/reference
 
 ##
 
-**Question:** How can i add secrets to repo and test them in workflow?
+**Question:** How can I add secrets to repo and test them in workflow?
 
 **Answer:** Secrets are encrypted environment variables that you create in an organization, repository, or repository environment. The secrets that you create are available to use in GitHub Actions workflows. You can read more about how to setup secrets in the repo [here](https://docs.github.com/en/actions/reference/encrypted-secrets)
 To use the secret in your workflow file you can simply use an expression: `${{ secrets.YOUR_SECRET_NAME }}` to evaluate your secret in workflow steps.
@@ -130,3 +130,12 @@ To use the secret in your workflow file you can simply use an expression: `${{ s
     ```
 
  In our case, `workflows: ["CI Workflow"]` -  "CI Workflow" is the workflow [name](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L8) of [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml)
+
+##
+
+**Question:** How does hardcoded secrets scan works in the workflow?
+
+**Answer:** The workflow uses [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) action to detect the secrets in code.
+ [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) action uses [detect-secrets](https://github.com/Yelp/detect-secrets) which is a module for detecting secrets within a code base. \
+ For tweaking the behaviour of secret scan for the workflow run, you can change the configuration of [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) in [pm-gh-actions.yml](https://github.com/predictionmachine/pm-gh-actions/blob/38f69ab7f32a385b251838e81b85449327e04f83/.github/workflows/pm-gh-actions.yml#L92). \
+ For more details please see [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) and [detect-secrets](https://github.com/Yelp/detect-secrets)
