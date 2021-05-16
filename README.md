@@ -1,24 +1,35 @@
-# pm-gh-actions
+# A Helpful GitHub Actions Workflow
 
-Repository for sanity checking and nicely commenting on pull requests for python repositories.
-Provides a GitHub Actions workflow file which you can customize. By default, assumes you are a fan of
-`black` (for layout), `flake8` for further pip8 conformance, `mypy` for typechecking, and `pytest` and _codeclimate quality_ for testing and coverage.
-Developed and used by _Prediction Machine_.
+
+This repository provides a **GitHub Actions [workflow](.github/workflows/pm-gh-actions.yml)** to check and nicely comment on 
+pull requests in python code bases.
+
+It will help with:
+- _PR quality_, like making sure there _is_ a description and there aren't secrets or .zip and similar files 
+  being checked in
+- _Code quality_, by running tools like
+  - `black` for consistent formatting,
+  - `flake8` for pip8 conformance,
+  - `interrogate` for presence of docstrings,
+  - `mypy` for typechecking, 
+  - `pytest` for testing.
+    
+It also reports to [codecov](https://about.codecov.io/) and 
+[codeclimate quality](https://codeclimate.com/quality/) to
+help you have a healthier, happier codebase.
+
 
  - - -
 
-## [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml)
-
-> ### Folder structure convention
+### Folder structure convention
+Getting these tools and checks to work together nicely takes some configuration.
+The expected layout is:
 
 ```bash
 .
 ├── .github
 │   └── workflows              # Workflow directory for your workflow files
 │       └── pm-gh-actions.yml
-├── LICENSE
-├── README.md
-├── docs                       # Documentation directory (alternatively `doc`)
 ├── projectname                # Project directory - top level directory for project
 │   └── example.py
 ├── pyproject.toml             # Configuration file for black, interrogate & pytest
@@ -30,50 +41,53 @@ Developed and used by _Prediction Machine_.
         └── test_example.py
 ```
 
-- The [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) expects above folder structure for your codebase to follow for a successful run of workflow.
-- Change in folder structure requires changes in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) as well, because commands in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) are based on above folder structure.
-- The  `main` branch will have a latest [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml). You can always refer to `main` branch to see latest changes of [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml)
-
 - - -
 
 ### Installation instructions:
 
-- To use [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) in your project repo, copy [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) from this repo, and paste it in the `.github/workflows/` folder of your project repo.
-- Once you have copied the [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) to `.github/workflows/` folder, set the value of `CC_TEST_REPORTER_ID` in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml). The value is used for reporting the test coverage to code climate, to your repo specific reporter id. See [finding your test coverage token](https://docs.codeclimate.com/docs/finding-your-test-coverage-token) for obtaining the id.
-- Next step is to copy [setup.cfg](setup.cfg) and [pyproject.toml](pyproject.toml) file to the root directory of your repo. These files are being used for configuration of linting, formatting and testing tools invoked by [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml). You can also invoke these tools locally prior to creating the PR.
-- Once the above steps are done you can run the workflow and test. You don't need to set up any other secrets like `GITHUB_TOKEN` for [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) to work.
-- For coverage run, this workflow assumes `tests` folder to be present in the repo else it will fail. If you want to add a different folder for coverage then you need to edit this `coverage run --source=tests -m pytest` [command](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.ym#L139) in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml), replacing `tests` with your location of tests.
-  - If you need [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) to use different configurations or configuration files for black, flake8, mypy, interrogate and pytest, then you can define them in the workflow file as below.
+- Copy and paste
+  [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) and relevant config files
+  into your repo.
+- Set a couple of secrets:
+  - `CC_TEST_REPORTER_ID` (a repo-specific id provided by Codeclimate)
+  See [finding your test coverage token](https://docs.codeclimate.com/docs/finding-your-test-coverage-token).
+  - `CODECOV_TOKEN`, a similar token provided by CodeCov. See [where is the repository upload token found](https://docs.codecov.io/docs/frequently-asked-questions#where-is-the-repository-upload-token-found).
+  - You don't need to set up `GITHUB_TOKEN` for [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) to work.
+
+- Copy [setup.cfg](setup.cfg) and [pyproject.toml](pyproject.toml) files to the root directory of your repo. These files are being used for configuration of linting, formatting and testing tools invoked by [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml).
+- Add `output/` to your top-level `.gitignore`. Things like coverage reports are written to that directory.
+
+
+
+  It's a good idea to invoke the configured linting tools locally prior to creating the PR.
+  ProTip: it is likely you can configure them in your IDE.
+  
+Take the workflow for a spin by making a PR in your repo.
   - For black, flake8, mypy you can update the configurations in [setup.cfg](setup.cfg) file, and [pyproject.toml](pyproject.toml) for interrogate, pytest configurations. If you would like to have separate configuration files for each tool, then use them in the workflow file as mentioned below.
   - For black replace the value of `black_args: '--config=pyproject.toml'` in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) under `with` [tag](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L122). This workflow uses default configuration provided by black.
   - For flake8, replace the value of `flake8_args: '--config=setup.cfg'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions#L118)
-  - For mypy replace the value of `mypy_flags: '--config-file=setup.cfg'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L130)
   - For interrogate, you need to add configuration file path to [this](https://github.com/predictionmachine/pm-gh-actions/blob/63bc3b28a6c48be33ad01c91cc14ad301cc7ec9a/.github/workflows/pm-gh-actions.yml#L161) command in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) file.
+  - For mypy replace the value of `mypy_flags: '--config-file=setup.cfg'` to your config file present in the repo. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L130)
   - For pytest, you need to add configuration file path to [this](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L138) command in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) file.
-- Please see FAQ section if you have any questions, feel free to raise an issue if you don't find an answer to your question.
-
-**Note:**
-
-- If you are running the commands mentioned in the workflow file locally, then please add `output/` to your `.gitignore` file [see here](https://github.com/predictionmachine/pm-gh-actions/blob/63bc3b28a6c48be33ad01c91cc14ad301cc7ec9a/.gitignore#L10), as this folder contains intermediate output files generated in CI build. [know more](#How-it-works)
+  - See the FAQ section below or raise an issue if you don't find an answer.
 
 - - -
 #### How it works:
 
-- Run the checks (as mentioned in the [pm-coding-template](https://github.com/predictionmachine/pm-coding-template)) as a CI build process (it can be used in other repo's)
-- This workflow uses the configuration files for black, flake8, mypy from the [setup.cfg](setup.cfg) and for pytest and interrogate from [pyproject.toml](pyproject.toml) respectively.
-- This workflow also creates an intermediate output files during the CI build, under `output/` folder, mentioned below:
-  - `pytest.xml` - contains the test results in junit-xml format - generated by pytest command.[see here](https://github.com/predictionmachine/pm-gh-actions/blob/63bc3b28a6c48be33ad01c91cc14ad301cc7ec9a/.github/workflows/pm-gh-actions.yml#L142)
-  - `coverage.xml` - contains the coverage report - generated by coverage.py. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/63bc3b28a6c48be33ad01c91cc14ad301cc7ec9a/.github/workflows/pm-gh-actions.yml#L144)
-  - `docstring_report.txt` - contains the docstring report - generated by [interrogate](https://github.com/predictionmachine/pm-gh-actions/blob/63bc3b28a6c48be33ad01c91cc14ad301cc7ec9a/.github/workflows/pm-gh-actions.yml#L159)
+- This workflow uses the configuration files for black, flake8, mypy from the [setup.cfg](setup.cfg) and for interrogate and pytest from [pyproject.toml](pyproject.toml) respectively.
+- This workflow also creates intermediate output files during the CI build, under `output/` folder, mentioned below:
+  - `output/pytest.xml` - contains the test results in junit-xml format - generated by pytest command.[see here](https://github.com/predictionmachine/pm-gh-actions/blob/63bc3b28a6c48be33ad01c91cc14ad301cc7ec9a/.github/workflows/pm-gh-actions.yml#L142)
+  - `output/coverage.xml` - contains the coverage report - generated by coverage.py. [see here](https://github.com/predictionmachine/pm-gh-actions/blob/63bc3b28a6c48be33ad01c91cc14ad301cc7ec9a/.github/workflows/pm-gh-actions.yml#L144)
+  - `output/docstring_report.txt` - contains the docstring report - generated by [interrogate](https://github.com/predictionmachine/pm-gh-actions/blob/63bc3b28a6c48be33ad01c91cc14ad301cc7ec9a/.github/workflows/pm-gh-actions.yml#L159)
 
-#### The check included in the CI build for workflow file is:
+#### The checks in the work flow include:
    - Check for empty PR description.
-   - Check for unwanted files - .zip etc.
+   - Check for unwanted files - `*.zip` etc.
    - Check hardcoded credentials in files.
-   - Linting, formatting and type check - black, flake8, mypy, interrogate
-   - Run test suite and generate result & test coverage using code climate
-   - Check missing docstrings using [interrogate](https://github.com/econchick/interrogate)
-
+   - Linting, formatting and type check - black, flake8, interrogate, mypy  
+   - Check for missing docstrings using [interrogate](https://github.com/econchick/interrogate)
+- Run test suite and generate result & test coverage using codecov; look for code issues with code climate
+   
 **Note**: For the above checks, the `github-actions` bot will comment on the issues in the PR and fail the relevant check if it finds problems.
 
 - - -
@@ -124,18 +138,22 @@ To use the secret in your workflow file you can simply use an expression: `${{ s
     ```yaml
     on:
      workflow_run:
-          workflows: ["CI Workflow"] # name of the workflow you want to execute after
+          workflows: ["PM CI Workflow"] # name of the workflow you want to execute after
           types:
             - completed
     ```
 
- In our case, `workflows: ["CI Workflow"]` -  "CI Workflow" is the workflow [name](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L8) of [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml)
+ In our case, `workflows: ["PM CI Workflow"]` -  "CI Workflow" is the workflow [name](https://github.com/predictionmachine/pm-gh-actions/blob/ab4b850e81b8cfa2224ab51e29c46c651dfcab72/.github/workflows/pm-gh-actions.yml#L8) of [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml)
 
 ##
 
-**Question:** How does hardcoded secrets scan works in the workflow?
+**Question:** How does hardcoded secrets scan work in the workflow?
 
 **Answer:** The workflow uses [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) action to detect the secrets in code.
  [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) action uses [detect-secrets](https://github.com/Yelp/detect-secrets) which is a module for detecting secrets within a code base. \
  For tweaking the behaviour of secret scan for the workflow run, you can change the configuration of [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) in [pm-gh-actions.yml](https://github.com/predictionmachine/pm-gh-actions/blob/38f69ab7f32a385b251838e81b85449327e04f83/.github/workflows/pm-gh-actions.yml#L92). \
  For more details please see [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) and [detect-secrets](https://github.com/Yelp/detect-secrets)
+
+- - -
+Developed and used by _Prediction Machine_.
+
