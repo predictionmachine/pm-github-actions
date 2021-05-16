@@ -1,8 +1,7 @@
 ############################################################################################
-# Copyright (C) Prediction Machine Advisers, LLC - All Rights Reserved
-# Unauthorized copying of this file, via any medium is strictly prohibited
-# Proprietary and confidential
-# Written by staff at Prediction Machine, April 2021
+# Copyright (C) 2021 Prediction Machine Advisers, LLC
+# Available under MIT license
+# version 0.3.0
 ############################################################################################
 
 name: PM CI workflow
@@ -199,11 +198,13 @@ jobs:
       - name: Test with pytest
         run: |
           python -m pytest --continue-on-collection-errors --junit-xml $PYTEST_OUTPUT_PATH
-          coverage run --source=tests -m pytest # run coverage
-          coverage xml -o "${{ env.COVERAGE_OUTPUT_PATH }}" # generate coverage file
-            # see https://github.com/codecov/codecov-action
       # HANDLE COVERAGE
+      - name: Generate coverage report
+        run: |
+          coverage run -m pytest
+          coverage xml -o $COVERAGE_OUTPUT_PATH
       - name: Upload codecov report
+        # see https://github.com/codecov/codecov-action
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
