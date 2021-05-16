@@ -82,6 +82,8 @@ jobs:
             Here is the detected file path: ${{ steps.file_check.outputs.file_paths }}
             Please make sure you have followed our [contributing guidelines](${{ env.GUIDELINE_REPO }}).
 
+  # see [reviewdog/action-detect-secrets](https://github.com/Yelp/detect-secrets) and
+  # [detect-secrets](https://github.com/Yelp/detect-secrets)
   check-harcoded-credentials:
     runs-on: ubuntu-latest
     name: Check hardcoded credentials in files
