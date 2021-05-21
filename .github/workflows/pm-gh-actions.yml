@@ -233,7 +233,7 @@ jobs:
       # HANDLE COVERAGE
       - name: Generate coverage report
         run: |
-          coverage run --source=tests -m pytest
+          coverage run -m pytest
           coverage xml -o $COVERAGE_OUTPUT_PATH
       - name: Upload codecov report
         # see https://github.com/codecov/codecov-action
