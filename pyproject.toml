@@ -1,7 +1,13 @@
 [tool.black]
 # your black config goes here
+# see https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-format
+
+[tool.coverage.run]
+# your coverage config goes here
+# see https://coverage.readthedocs.io/en/latest/config.html
 
 [tool.interrogate]
+# see https://interrogate.readthedocs.io/en/latest/#configuration
 ignore-init-method = true
 ignore-init-module = true
 ignore-magic = true
@@ -13,6 +19,7 @@ color = true
 ignore-nested-functions = true
 
 [tool.pytest.ini_options]
+# see https://docs.pytest.org/en/6.2.x/customize.html#pyproject-toml
 addopts = "--strict-markers -vv"
 markers = [
     'integration: integration tests'
