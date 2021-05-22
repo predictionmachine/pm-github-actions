@@ -205,7 +205,6 @@ jobs:
     env:
       MIN_DOC_COV: 100
       COVERAGE_OUTPUT_PATH: output/coverage.xml
-      PYTEST_OUTPUT_PATH: output/pytest.xml
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -229,7 +228,7 @@ jobs:
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: Test with pytest
         run: |
-          python -m pytest --continue-on-collection-errors --junit-xml $PYTEST_OUTPUT_PATH
+          python -m pytest --continue-on-collection-errors
       # HANDLE COVERAGE
       - name: Generate coverage report
         run: |
@@ -243,11 +242,6 @@ jobs:
           files: ${{ env.COVERAGE_OUTPUT_PATH }}
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
-      - name: Show unit test results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: always()
-        with:
-          files: ${{ env.PYTEST_OUTPUT_PATH }}
       - name: Upload code coverage to codeclimate
         uses: paambaati/codeclimate-action@v2.7.5
         env:
