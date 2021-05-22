@@ -226,6 +226,9 @@ jobs:
           python -m pip install --upgrade pip
           if [ requirements.txt ]; then pip install -r requirements.txt; fi
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+      - name: Test with pytest
+        run: |
+          python -m pytest --continue-on-collection-errors
       # HANDLE COVERAGE
       - name: Generate coverage report
         run: |
