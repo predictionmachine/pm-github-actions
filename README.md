@@ -16,7 +16,7 @@ It will help with:
 
 It also reports to [codecov](https://about.codecov.io/) and
 [codeclimate quality](https://codeclimate.com/quality/) to
-help you have a healthier, happier codebase.
+help you have a healthier, easier to evolve codebase.
 
 
  - - -
@@ -43,7 +43,7 @@ The expected layout is:
 
 - - -
 
-### Installation instructions:
+## Installation:
 
 - Copy and paste
   [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) and relevant config files
@@ -58,21 +58,16 @@ The expected layout is:
 - Add `output/` to your top-level `.gitignore`. Things like coverage reports are written to that directory.
 
 
-
   It's a good idea to invoke the configured linting tools locally prior to creating the PR.
   ProTip: it is likely you can configure them in your IDE.
 
 Take the workflow for a spin by making a PR in your repo.
-  - For black, flake8, mypy you can update the configurations in [setup.cfg](setup.cfg) file, and [pyproject.toml](pyproject.toml) for interrogate, pytest configurations. If you would like to have separate configuration files for each tool, then use them in the workflow file as mentioned below.
-  - For black replace the value of `black_args: '--config=pyproject.toml'` in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml). This workflow uses default configuration provided by black.
-  - For flake8, replace the value of `flake8_args: '--config=setup.cfg'` to your config file present in the repo.
-  - For interrogate, you need to add configuration file path to `interrogate` command in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) file.
-  - For mypy replace the value of `mypy_flags: '--config-file=setup.cfg'` to your config file present in the repo.
-  - For pytest, you need to add configuration file path to `pytest` command in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) file.
-  - See the FAQ section below or raise an issue if you don't find an answer.
+  - `black`, `flake8`, and `mypy` configurations are in [setup.cfg](setup.cfg); `interrogate`, and `pytest` are in [pyproject.toml](pyproject.toml), update as needed.
+  - **UPDATE** [mypy] `mypy-path` and `files` in [setup.cfg](setup.cfg)
+  - For more config tips see the FAQ below or raise a an issue labeled "question".
 
 - - -
-#### How it works:
+### How it works:
 
 - This workflow uses the configuration files for black, flake8, mypy from the [setup.cfg](setup.cfg) and for interrogate and pytest from [pyproject.toml](pyproject.toml) respectively.
 - This workflow also creates intermediate output files during the CI build, under `output/` folder, mentioned below:
@@ -125,9 +120,22 @@ You can read more about this [here](https://docs.github.com/en/actions/reference
 
 **Question:** How can I add secrets to repo and test them in workflow?
 
-**Answer:** Secrets are encrypted environment variables that you create in an organization, repository, or repository environment. The secrets that you create are available to use in GitHub Actions workflows. You can read more about how to setup secrets in the repo [here](https://docs.github.com/en/actions/reference/encrypted-secrets)
-To use the secret in your workflow file you can simply use an expression: `${{ secrets.YOUR_SECRET_NAME }}` to evaluate your secret in workflow steps.
+**Answer:** Yep. Secrets are encrypted environment variables that you create in an organization, repository, or repository environment.
+To use the secret, simply use an expression: `${{ secrets.YOUR_SECRET_NAME }}` in a workflow step.
+You can read more about how to [setup secrets](https://docs.github.com/en/actions/reference/encrypted-secrets)
 
+##
+
+**Question:** How do I tweak configurations of the checkers?
+
+**Answer:**
+If you want to pass additional args, change location of config file, proceed as follows:
+
+ - For black replace the value of `black_args: '--config=pyproject.toml'` in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml). This workflow uses default configuration provided by black.
+  - For flake8, replace the value of `flake8_args: '--config=setup.cfg'` to your config file present in the repo.
+  - For interrogate, you need to add configuration file path to `interrogate` command in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) file.
+  - For mypy replace the value of `mypy_flags: '--config-file=setup.cfg'` to your config file present in the repo.
+  - For pytest, you need to add configuration file path to `pytest` command in [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) file.
 ##
 
 **Question:** How can I execute an additional workflow after this workflow succeeds?
