@@ -1,0 +1,45 @@
+############################################################################################
+# Copyright (C) 2021 Prediction Machine Advisers, LLC
+# This file is available under MIT license
+# based on https://github.com/predictionmachine/pm-gh-actions/blob/main/.codelclimate.yml
+# pm-version 0.1.1
+############################################################################################
+# see https://docs.codeclimate.com/docs/advanced-configuration
+version: "2"         # required to adjust maintainability checks
+checks:
+#  argument-count:
+#    config:
+#      threshold: 4
+#  complex-logic:
+#    config:
+#      threshold: 4
+  file-lines:
+    config:
+      threshold: 400  # default is 250
+#  method-complexity:
+#    config:
+#      threshold: 5
+#  method-count:
+#    config:
+#      threshold: 20
+#  method-lines:
+#    config:
+#      threshold: 25
+#  nested-control-flow:
+#    config:
+#      threshold: 4
+#  return-statements:
+#    config:
+#      threshold: 4
+#  similar-code:
+#    config:
+#      threshold: # language-specific defaults. an override will affect all languages.
+#  identical-code:
+#    config:
+#      threshold: # language-specific defaults. an override will affect all languages.
+plugins:
+  sonar-python:
+    # see https://docs.codeclimate.com/docs/sonar-python
+    enabled: true
+    config:
+      minimum_severity: major  # default is "major"
