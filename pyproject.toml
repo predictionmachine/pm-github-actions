@@ -3,8 +3,8 @@
 # see https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-format
 
 [tool.coverage.run]
-# your coverage config goes here
 # see https://coverage.readthedocs.io/en/latest/config.html
+omit = ["tests/*"]
 
 [tool.interrogate]
 # see https://interrogate.readthedocs.io/en/latest/#configuration
