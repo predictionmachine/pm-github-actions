@@ -1,10 +1,11 @@
+# pm-version 0.1.1
 [tool.black]
-# your black config goes here
 # see https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-format
+# your black config goes here
 
 [tool.coverage.run]
-# your coverage config goes here
 # see https://coverage.readthedocs.io/en/latest/config.html
+omit = ["tests/*"]
 
 [tool.interrogate]
 # see https://interrogate.readthedocs.io/en/latest/#configuration
