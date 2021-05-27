@@ -1,5 +1,7 @@
 # A Helpful GitHub Actions Workflow
-
+[![codecov](https://codecov.io/gh/predictionmachine/pm-coding-template/branch/main/graph/badge.svg?token=W1bAJ3l546)](https://codecov.io/gh/predictionmachine/pm-coding-template)
+[![PM CI workflow](https://github.com/predictionmachine/pm-coding-template/actions/workflows/pm-gh-actions.yml/badge.svg)](https://github.com/predictionmachine/pm-coding-template/actions/workflows/pm-gh-actions.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 This repository provides a **GitHub Actions [workflow](.github/workflows/pm-gh-actions.yml)** to check and nicely comment on
 pull requests in python code bases.
@@ -63,8 +65,8 @@ The expected layout is:
 
 Take the workflow for a spin by making a PR in your repo.
   - `black`, `flake8`, and `mypy` configurations are in [setup.cfg](setup.cfg); `interrogate`, and `pytest` are in [pyproject.toml](pyproject.toml), update as needed.
-  - **UPDATE** in [setup.cfg](setup.cfg#15), in `[mypy]` section, `files = ./projectname` 
-  - For more config tips see the FAQ below or raise a an issue labeled "question".
+  - **UPDATE** in [setup.cfg](setup.cfg), in `[mypy]` section, `files = ./tests,./projectname` 
+  - For more config tips see the FAQ below or raise an issue labeled "question".
 
 - - -
 ### How it works:
