@@ -173,6 +173,7 @@ jobs:
 
           sed 's!^==.*!## Docstring Summary :memo:<details><summary>coverage details</summary>!'
           echo -n '\n</details>' >> "$DOCSTRING_REPORT"
+          echo "$DOCSTRING_REPORT"
       - name: Post docstring report as PR comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
