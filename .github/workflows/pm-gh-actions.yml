@@ -2,7 +2,7 @@
 # Copyright (C) 2021 Prediction Machine Advisers, LLC
 # This file is available under MIT license
 # based on https://github.com/predictionmachine/pm-gh-actions/blob/main/.github/workflows/pm-gh-actions.yml
-# pm-version 0.3.3.2
+# pm-version 0.3.4
 ############################################################################################
 
 name: PM CI workflow
@@ -172,7 +172,7 @@ jobs:
           python-version: 3.8
       - name: Install dependencies & create output directory for reports
         run: |
-          python -m pip install --upgrade pip interrogate
+          pip install --upgrade pip interrogate
           mkdir -p output # for docstring report
       - name: Generate docstring report
         # see also https://github.com/JackMcKew/python-interrogate-check#full-example
