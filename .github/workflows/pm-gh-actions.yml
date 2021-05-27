@@ -193,7 +193,7 @@ jobs:
           sed -i "s!.*----------- RESULT!\n</details>\nRESULT!" "$DOCSTRING_REPORT"
           sed -i "s!) --.*!)!" "$DOCSTRING_REPORT"
           sed -i "s/TOTAL/**TOTAL**/" "$DOCSTRING_REPORT"
-          gawk -i inplace' !/^|--.*--|/ || !f++' "$DOCSTRING_REPORT"
+          gawk -i inplace '!/^|--.*--|/ || !f++' "$DOCSTRING_REPORT"
           cat "$DOCSTRING_REPORT"
       - name: Post docstring report as PR comment
         uses: marocchino/sticky-pull-request-comment@v2
