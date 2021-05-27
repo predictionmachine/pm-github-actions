@@ -158,43 +158,39 @@ jobs:
           flake8_args: '--config=setup.cfg'
           reporter: github-pr-review
           fail_on_error: true
+  interrogate:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    name: 'Docstrings coverage check (interrogate)'
+    env:
+      DOCSTRING_REPORT: output/docstring_report.txt
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
       - name: Install dependencies & create output directory for reports
         run: |
           python -m pip install --upgrade pip interrogate
           mkdir -p output # for docstring report
-      interrogate:
-        timeout-minutes: 10
-        runs-on: ubuntu-latest
-        name: 'Docstrings coverage check (interrogate)'
-        env:
-          DOCSTRING_REPORT: output/docstring_report.txt
-        steps:
-          - uses: actions/checkout@v2
-          - name: Set up Python 3.8
-            uses: actions/setup-python@v2
-            with:
-              python-version: 3.8
-          - name: Install dependencies & create output directory for reports
-            run: |
-              python -m pip install --upgrade pip interrogate
-              mkdir -p output # for docstring report
-          - name: Generate docstring report
-            # see also https://github.com/JackMcKew/python-interrogate-check#full-example
-            run: |
-              interrogate -o "$DOCSTRING_REPORT"
-              exit 0  # if interrogate failed, the cov will fail separately, later
-          - name: Analyze docstring report
-            id: docstringCheck
-            run: |
-              total_cov=$(grep -o 'actual: [0-9.]*' $DOCSTRING_REPORT | sed 's/actual: //') # get actual docstring coverage from docstring report file
-              echo "::set-output name=total_cov::$cov_val"
-              passed_or_failed=$(grep -o '-- RESULT: \w*' $DOCSTRING_REPORT | sed 's/-- RESULT: //')
-              echo "::set-output name=passed_or_failed::$passed_or_failed"
-          - name: Reformat docstring report
-            run: |
-              sed 's!^==.*!## Docstring Summary :memo:<details><summary>coverage details</summary>!'
-              echo -n '\n</details>' >> "$DOCSTRING_REPORT"
-              echo "$DOCSTRING_REPORT"
+      - name: Generate docstring report
+        # see also https://github.com/JackMcKew/python-interrogate-check#full-example
+        run: |
+          interrogate -o "$DOCSTRING_REPORT"
+          exit 0  # if interrogate failed, the cov will fail separately, later
+      - name: Analyze docstring report
+        id: docstringCheck
+        run: |
+          total_cov=$(grep -o 'actual: [0-9.]*' $DOCSTRING_REPORT | sed 's/actual: //') # get actual docstring coverage from docstring report file
+          echo "::set-output name=total_cov::$cov_val"
+          passed_or_failed=$(grep -o '-- RESULT: \w*' $DOCSTRING_REPORT | sed 's/-- RESULT: //')
+          echo "::set-output name=passed_or_failed::$passed_or_failed"
+      - name: Reformat docstring report
+        run: |
+          sed 's!^==.*!## Docstring Summary :memo:<details><summary>coverage details</summary>!'
+          echo -n '\n</details>' >> "$DOCSTRING_REPORT"
+          echo "$DOCSTRING_REPORT"
       - name: Post docstring report as PR comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
