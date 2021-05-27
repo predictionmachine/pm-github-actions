@@ -134,7 +134,7 @@ jobs:
   linting:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    name: 'Linting: black, flake8, docstrings interrogate'
+    name: 'Linting: black, flake8'
     env:
       MIN_DOC_COV: 100
       DOCSTRING_REPORT: output/docstring_report.txt
@@ -188,8 +188,8 @@ jobs:
           echo "::set-output name=passed_or_failed::$passed_or_failed"
       - name: Reformat docstring report
         run: |
-          sed 's!^==.*!## Docstring Summary :memo:<details><summary>coverage details</summary>!'
-          echo -n '\n</details>' >> "$DOCSTRING_REPORT"
+          sed -i 's!^==.*!## Docstring Summary :memo:<details><summary>coverage details</summary>!' "$DOCSTRING_REPORT"
+          echo -e '\n</details>\n' >> "$DOCSTRING_REPORT"
           cat "$DOCSTRING_REPORT"
       - name: Post docstring report as PR comment
         uses: marocchino/sticky-pull-request-comment@v2
