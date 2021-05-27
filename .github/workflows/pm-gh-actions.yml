@@ -190,6 +190,8 @@ jobs:
         run: |
           sed -i "s!^==.*!## Docstring Summary :memo:!" "$DOCSTRING_REPORT"
           sed -i "s!.*-- Summary --.*!\n<details><summary>coverage details</summary>\n!" "$DOCSTRING_REPORT"
+          sed -i "s!.*----------- RESULT!\nRESULT!" "$DOCSTRING_REPORT"
+          sed -i "s!) --.*!)!" "$DOCSTRING_REPORT"
           echo -e '\n</details>\n' >> "$DOCSTRING_REPORT"
           cat "$DOCSTRING_REPORT"
       - name: Post docstring report as PR comment
