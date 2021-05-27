@@ -65,7 +65,7 @@ The expected layout is:
 
 Take the workflow for a spin by making a PR in your repo.
   - `black`, `flake8`, and `mypy` configurations are in [setup.cfg](setup.cfg); `interrogate`, and `pytest` are in [pyproject.toml](pyproject.toml), update as needed.
-  - **UPDATE** in [setup.cfg](setup.cfg#15), in `[mypy]` section, `files = ./projectname` 
+  - **UPDATE** in [setup.cfg](setup.cfg), in `[mypy]` section, `files = ./tests,./projectname` 
   - For more config tips see the FAQ below or raise an issue labeled "question".
 
 - - -
