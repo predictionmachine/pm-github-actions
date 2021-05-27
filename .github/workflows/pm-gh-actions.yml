@@ -249,7 +249,7 @@ jobs:
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: Test with pytest
         run: |
-          python -m pytest --continue-on-collection-errors
+          pytest -n 2 --continue-on-collection-errors
       # HANDLE COVERAGE
       - name: Generate coverage report
         run: |
