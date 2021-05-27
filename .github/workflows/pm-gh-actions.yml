@@ -166,24 +166,22 @@ jobs:
         id: docstringCheck
         # see also https://github.com/JackMcKew/python-interrogate-check#full-example
         run: |
-          python -m interrogate -o "$DOCSTRING_REPORT"
-          cov_val=$(grep -o 'actual: [0-9.]*' $DOCSTRING_REPORT | sed 's/actual: //') # get actual docstring coverage from docstring report file
-          total_cov=$(echo "$cov_val" | bc)
-          echo "::set-output name=total_cov::$total_cov"
+          interrogate -o "$DOCSTRING_REPORT"
+          passed_or_failed=$(grep -o '-- RESULT: \w*' $DOCSTRING_REPORT | sed 's/-- RESULT: //')
+          echo "::set-output name=interrogate_passed_or_failed::$passed_or_failed"
           line_count=$(wc -l < "$DOCSTRING_REPORT")
-          sed -i "${line_count}i"$'\n' "$DOCSTRING_REPORT" # insert a newline after total row.
-          sed -i '1d' "$DOCSTRING_REPORT" # delete the 1st line from the report, which is a coverage path.
-          sed -i "1i"$'## Docstring Summary :memo:' "$DOCSTRING_REPORT" # insert a title on 1st line, for the PR comment.
-      - name: Post docstring report as PR comments
+
+          sed 's!^==.*!## Docstring Summary :memo:<details><summary>coverage details</summary>!'
+          echo -n '\n</details>' >> "$DOCSTRING_REPORT"
+      - name: Post docstring report as PR comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: docstring-comment
           path: ${{ env.DOCSTRING_REPORT }}
-      - name: Exit the job for less docstring coverage in a codebase
-        if: ${{ steps.docstringCheck.outputs.total_cov < env.MIN_DOC_COV }}
+      - name: Exit the job for docstring coverage failed
+        if: ${{ steps.docstringCheck.outputs.interrogate_passed_or_failed == 'FAILED' }}
         run: |
-          echo "Failed because of less docstring coverage"
-          echo "Expected coverage is $MIN_DOC_COV, actual coverage is ${{ steps.docstringCheck.outputs.total_cov }}"
+          echo "Docstring coverage (interrogate): failed because coverage is low"
           exit 1
 
   mypy-typecheck:
