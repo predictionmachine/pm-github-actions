@@ -259,7 +259,6 @@ jobs:
           # get from https://codeclimate.com/repos/6094b3d1a32d9010d700292e/settings/test_reporter
           CC_TEST_REPORTER_ID: '${{ secrets.CC_TEST_REPORTER_ID }}'
         with:
-          coverageCommand: coverage report
           coverageLocations: ${{ env.COVERAGE_OUTPUT_PATH }}
       - name: Upload codecov report
         # see https://github.com/codecov/codecov-action
