@@ -247,14 +247,11 @@ jobs:
           python -m pip install --upgrade pip
           if [ requirements.txt ]; then pip install -r requirements.txt; fi
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-      - name: Test with pytest
+      - name: Test with pytest and generate cov
+        # see also https://pytest-cov.readthedocs.io/en/latest/config.html
         run: |
-          pytest --continue-on-collection-errors
-      # HANDLE COVERAGE
-      - name: Generate coverage report
-        run: |
-          coverage run -m pytest
-          coverage xml -o $COVERAGE_OUTPUT_PATH
+          pytest --cov-report xml:$COVERAGE_OUTPUT_PATH --cov=. --cov-config=setup.cfg \
+            --continue-on-collection-errors --no-cov-on-fail
       - name: Upload codecov report
         # see https://github.com/codecov/codecov-action
         uses: codecov/codecov-action@v1
