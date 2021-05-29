@@ -1,7 +1,8 @@
 # A Helpful GitHub Actions Workflow
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 [![PM CI workflow](https://github.com/predictionmachine/pm-coding-template/actions/workflows/pm-gh-actions.yml/badge.svg)](https://github.com/predictionmachine/pm-coding-template/actions/workflows/pm-gh-actions.yml)
-<!-- see https://app.codecov.io/gh/predictionmachine/pm-gh-actions/settings/badge -->
-[![codecov](https://codecov.io/gh/predictionmachine/pm-gh-actions/branch/main/graph/badge.svg?token=2AQW1NP110)](https://codecov.io/gh/predictionmachine/pm-gh-actions)
+<!-- see https://app.codecov.io/gh/predictionmachine/pm-github-actions/settings/badge -->
+[![codecov](https://codecov.io/gh/predictionmachine/pm-github-actions/branch/main/graph/badge.svg?token=2AQW1NP110)](https://codecov.io/gh/predictionmachine/pm-github-actions)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 This repository provides a **GitHub Actions [workflow](.github/workflows/pm-gh-actions.yml)** to check and nicely comment on
@@ -168,4 +169,5 @@ If you want to pass additional args, change location of config file, proceed as 
  For more details please see [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) and [detect-secrets](https://github.com/Yelp/detect-secrets)
 
 - - -
-Developed and used by _Prediction Machine_.
+<!-- TODO: update to new website when ready -->
+Developed and used by [Prediction Machine](https://github.com/predictionmachine).
