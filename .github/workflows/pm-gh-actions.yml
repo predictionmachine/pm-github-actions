@@ -194,7 +194,7 @@ jobs:
           sed -i "s/TOTAL    /**TOTAL**/" "$DOCSTRING_REPORT"
           sed -i "s/ PASSED / **PASSED** /" "$DOCSTRING_REPORT"
           sed -i "s/ FAILED / **FAILED** /" "$DOCSTRING_REPORT"
-          # drop secong separator line; TODO: run with -vv and format nicely
+          # drop second separator line; TODO: run with -vv and format nicely
           gawk -i inplace '!/^[|]-/ || !f++' "$DOCSTRING_REPORT"
           cat "$DOCSTRING_REPORT"
       - name: Post docstring report as PR comment
