@@ -2,7 +2,7 @@
 # Copyright (C) 2021 Prediction Machine Advisers, LLC
 # This file is available under MIT license
 # based on https://github.com/predictionmachine/pm-github-actions/blob/main/.github/workflows/pm-gh-actions.yml
-# pm-version 0.3.5.2
+# pm-version 0.3.6
 ############################################################################################
 
 name: PM CI workflow
@@ -225,7 +225,6 @@ jobs:
     runs-on: ubuntu-latest
     name: 'Pytest and Coverage'
     env:
-      MIN_DOC_COV: 100
       COVERAGE_OUTPUT_PATH: output/coverage.xml
     steps:
       - name: Checkout code
