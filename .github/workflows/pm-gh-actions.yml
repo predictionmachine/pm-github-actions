@@ -2,7 +2,7 @@
 # Copyright (C) 2021 Prediction Machine Advisers, LLC
 # This file is available under MIT license
 # based on https://github.com/predictionmachine/pm-gh-actions/blob/main/.github/workflows/pm-gh-actions.yml
-# pm-version 0.3.5
+# pm-version 0.3.5.1
 ############################################################################################
 
 name: PM CI workflow
@@ -250,7 +250,7 @@ jobs:
       - name: Test with pytest and generate cov
         # see also https://pytest-cov.readthedocs.io/en/latest/config.html
         run: |
-          pytest --cov-report xml:$COVERAGE_OUTPUT_PATH --cov=. --cov-config=setup.cfg \
+          python -m pytest --cov-report xml:$COVERAGE_OUTPUT_PATH --cov=. --cov-config=setup.cfg \
             --continue-on-collection-errors --no-cov-on-fail
       - name: Upload code coverage to codeclimate
         uses: paambaati/codeclimate-action@v2.7.5
