@@ -1,5 +1,5 @@
 # based on https://github.com/predictionmachine/pm-gh-actions/blob/main/pyproject.toml
-# pm-version 0.1.2
+# pm-version 0.1.3
 
 [tool.black]
 # see https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-format
@@ -23,7 +23,7 @@ ignore-nested-functions = true
 
 [tool.pytest.ini_options]
 # see https://docs.pytest.org/en/6.2.x/customize.html#pyproject-toml
-addopts = "--strict-markers -vv"
+addopts = "-n2 --strict-markers -vv"
 markers = [
     'integration: integration tests'
 ]

@@ -2,7 +2,7 @@
 # Copyright (C) 2021 Prediction Machine Advisers, LLC
 # This file is available under MIT license
 # based on https://github.com/predictionmachine/pm-gh-actions/blob/main/.github/workflows/pm-gh-actions.yml
-# pm-version 0.3.4
+# pm-version 0.3.5
 ############################################################################################
 
 name: PM CI workflow
@@ -247,14 +247,21 @@ jobs:
           python -m pip install --upgrade pip
           if [ requirements.txt ]; then pip install -r requirements.txt; fi
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-      - name: Test with pytest
+      - name: Test with pytest and generate cov
+        # see also https://pytest-cov.readthedocs.io/en/latest/config.html
         run: |
-          python -m pytest --continue-on-collection-errors
-      # HANDLE COVERAGE
-      - name: Generate coverage report
-        run: |
-          coverage run -m pytest
-          coverage xml -o $COVERAGE_OUTPUT_PATH
+          pytest --cov-report xml:$COVERAGE_OUTPUT_PATH --cov=. --cov-config=setup.cfg \
+            --continue-on-collection-errors --no-cov-on-fail
+      - name: Upload code coverage to codeclimate
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          # see https://docs.codeclimate.com/docs/finding-your-test-coverage-token
+          # get from https://codeclimate.com/repos/6094b3d1a32d9010d700292e/settings/test_reporter
+          CC_TEST_REPORTER_ID: '${{ secrets.CC_TEST_REPORTER_ID }}'
+        with:
+          # see https://github.com/marketplace/actions/code-climate-coverage-action#inputs
+          coverageLocations: |
+            ${{ env.COVERAGE_OUTPUT_PATH }}:coverage.py
       - name: Upload codecov report
         # see https://github.com/codecov/codecov-action
         uses: codecov/codecov-action@v1
@@ -263,12 +270,3 @@ jobs:
           files: ${{ env.COVERAGE_OUTPUT_PATH }}
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
-      - name: Upload code coverage to codeclimate
-        uses: paambaati/codeclimate-action@v2.7.5
-        env:
-          # see https://docs.codeclimate.com/docs/finding-your-test-coverage-token
-          # get from https://codeclimate.com/repos/6094b3d1a32d9010d700292e/settings/test_reporter
-          CC_TEST_REPORTER_ID: '${{ secrets.CC_TEST_REPORTER_ID }}'
-        with:
-          coverageCommand: coverage report
-          coverageLocations: ${{ env.COVERAGE_OUTPUT_PATH }}
