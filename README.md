@@ -36,8 +36,8 @@ The expected layout is:
 │       └── pm-gh-actions.yml
 ├── projectname                # Project directory - top level directory for project
 │   └── example.py
-├── pyproject.toml             # Configuration file for black, interrogate & pytest
 ├── .codeclimate.yml           # Configuration file for codeclimate analysis
+├── pyproject.toml             # Configuration file for black, interrogate & pytest
 ├── requirements-dev.txt       # Development requirements file
 ├── requirements.txt           # Requirements file
 ├── setup.cfg                  # Configuration file for flake8, mypy
