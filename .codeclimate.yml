@@ -43,3 +43,9 @@ plugins:
     enabled: true
     config:
       minimum_severity: major  # default is "major"
+  shellcheck:
+    # see https://docs.codeclimate.com/docs/shellcheck
+    enabled: true
+  # editorconfig:
+  #   # see https://docs.codeclimate.com/docs/editorconfig
+  #   enabled: true
