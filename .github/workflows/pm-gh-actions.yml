@@ -189,7 +189,7 @@ jobs:
         run: |
           sed -i "s!^==.*!## Docstring Coverage :memo:!" "$DOCSTRING_REPORT"
           sed -i "s!.*-- Summary --.*!\n<details><summary>docstring coverage details</summary>\n!" "$DOCSTRING_REPORT"
-          sed -i "s!.*-- RESULT: !</details>\n\n!" "$DOCSTRING_REPORT"
+          sed -i "s!.*-- RESULT:!</details>\n\n!" "$DOCSTRING_REPORT"
           sed -i "s!) --.*!)!" "$DOCSTRING_REPORT"
           sed -i "s/TOTAL    /**TOTAL**/" "$DOCSTRING_REPORT"
           sed -i "s/ PASSED / **PASSED** /" "$DOCSTRING_REPORT"
