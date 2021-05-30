@@ -1,8 +1,8 @@
 ############################################################################################
 # Copyright (C) 2021 Prediction Machine Advisers, LLC
 # This file is available under MIT license
-# based on https://github.com/predictionmachine/pm-gh-actions/blob/main/.github/workflows/pm-gh-actions.yml
-# pm-version 0.3.5.1
+# based on https://github.com/predictionmachine/pm-github-actions/blob/main/.github/workflows/pm-gh-actions.yml
+# pm-version 0.3.6
 ############################################################################################
 
 name: PM CI workflow
@@ -136,7 +136,6 @@ jobs:
     runs-on: ubuntu-latest
     name: 'Linting: black, flake8'
     env:
-      MIN_DOC_COV: 100
       DOCSTRING_REPORT: output/docstring_report.txt
     steps:
       - uses: actions/checkout@v2
@@ -176,24 +175,26 @@ jobs:
           mkdir -p output # for docstring report
       - name: Generate docstring report
         # see also https://github.com/JackMcKew/python-interrogate-check#full-example
+        # if interrogate failed, the cov will fail separately, later
         run: |
-          interrogate -o "$DOCSTRING_REPORT"
-          exit 0  # if interrogate failed, the cov will fail separately, later
+          interrogate -o "$DOCSTRING_REPORT" || exit 0
       - name: Analyze docstring report
         id: docstringCheck
         run: |
           total_cov=$(grep -o 'actual: [0-9.]*' $DOCSTRING_REPORT | sed 's/actual: //') # get actual docstring coverage from docstring report file
           echo "::set-output name=total_cov::$cov_val"
-          passed_or_failed=$(grep -o '-- RESULT: \w*' $DOCSTRING_REPORT | sed 's/-- RESULT: //')
+          passed_or_failed=$(grep -o 'RESULT: \w*' $DOCSTRING_REPORT | sed 's/RESULT: //')
           echo "::set-output name=passed_or_failed::$passed_or_failed"
       - name: Reformat docstring report
         run: |
-          sed -i "s!^==.*!## Docstring Summary :memo:!" "$DOCSTRING_REPORT"
-          sed -i "s!.*-- Summary --.*!\n<details><summary>coverage details</summary>\n!" "$DOCSTRING_REPORT"
-          sed -i "s!.*----------- RESULT!\n</details>\nRESULT!" "$DOCSTRING_REPORT"
+          sed -i "s!^=.*!## Docstring Coverage :memo:!" "$DOCSTRING_REPORT"
+          sed -i "s!.*-- Summary --.*!\n<details><summary>docstring coverage details</summary>\n!" "$DOCSTRING_REPORT"
+          sed -i "s!.*-- RESULT:!</details>\n\n!" "$DOCSTRING_REPORT"
           sed -i "s!) --.*!)!" "$DOCSTRING_REPORT"
-          sed -i "s/TOTAL/**TOTAL**/" "$DOCSTRING_REPORT"
-          # drop secong separator line; TODO: run with -vv and format nicely
+          sed -i "s/TOTAL    /**TOTAL**/" "$DOCSTRING_REPORT"
+          sed -i "s/ PASSED / **PASSED** /" "$DOCSTRING_REPORT"
+          sed -i "s/ FAILED / **FAILED** /" "$DOCSTRING_REPORT"
+          # drop second separator line; TODO: run with -vv and format nicely
           gawk -i inplace '!/^[|]-/ || !f++' "$DOCSTRING_REPORT"
           cat "$DOCSTRING_REPORT"
       - name: Post docstring report as PR comment
@@ -224,7 +225,6 @@ jobs:
     runs-on: ubuntu-latest
     name: 'Pytest and Coverage'
     env:
-      MIN_DOC_COV: 100
       COVERAGE_OUTPUT_PATH: output/coverage.xml
     steps:
       - name: Checkout code
