@@ -1,0 +1,43 @@
+# Copyright (C) 2021 Prediction Machine Advisers, LLC
+# This file is available under MIT license
+# based on https://github.com/predictionmachine/pm-github-actions/blob/main/.pre-commit-config.yaml
+# pm-version 0.1.1
+
+# Run `pre-commit install`
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-ast
+      # - id: check-json
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=50']
+      - id: no-commit-to-branch
+  - repo: https://github.com/psf/black
+    rev: 21.5b2
+    hooks:
+      - id: black
+  - repo: https://github.com/dfm/black_nbconvert
+    rev: 'v0.2.0'
+    hooks:
+      - id: black_nbconvert
+#  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+#    rev: '2.1.5'
+#    hooks:
+#      - id: forbid-binary
+#        exclude: >
+#          (?x)^(
+#            docs|[.]png
+#          )$
+# # creates many lines of imports
+#  - repo: https://github.com/asottile/reorder_python_imports
+#    rev: v2.5.0
+#    hooks:
+#      - id: reorder-python-imports
