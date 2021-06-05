@@ -1,5 +1,9 @@
-# Run `pre-commit install`
+# Copyright (C) 2021 Prediction Machine Advisers, LLC
+# This file is available under MIT license
+# based on https://github.com/predictionmachine/pm-github-actions/blob/main/.pre-commit-config.yaml
 # pm-version 0.1.1
+
+# Run `pre-commit install`
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
