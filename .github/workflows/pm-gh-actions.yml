@@ -2,7 +2,7 @@
 # Copyright (C) 2021 Prediction Machine Advisers, LLC
 # This file is available under MIT license
 # based on https://github.com/predictionmachine/pm-github-actions/blob/main/.github/workflows/pm-gh-actions.yml
-# pm-version 0.3.6
+# pm-version 0.3.6.1
 ############################################################################################
 
 name: PM CI workflow
@@ -27,8 +27,9 @@ jobs:
   # Check branch name standard as per `pm-coding-template`
   # Ref: https://github.com/predictionmachine/pm-coding-template#github-branches-pull-requests
   check-branch-naming-convention:
-    runs-on: ubuntu-latest
     name: Check branch naming convention as per pm-coding-template
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: ${{ github.event_name == 'pull_request' }}
     env:
       BRANCH_NAME_RULE: 'https://github.com/predictionmachine/pm-coding-template#github-branches-pull-requests'
@@ -58,8 +59,9 @@ jobs:
           exit 1
 
   enforce-pr-description:
-    runs-on: ubuntu-latest
     name: 'Check PR description, fail if empty'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       TEMPLATE_URL: 'https://github.com/predictionmachine/pm-coding-template/blob/main/.github/pull_request_template.md'
     steps:
@@ -88,8 +90,9 @@ jobs:
           exit 1
 
   check-unwanted-files:
-    runs-on: ubuntu-latest
     name: Check for unwanted files - .zip etc.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -118,9 +121,10 @@ jobs:
 
   # see [reviewdog/action-detect-secrets](https://github.com/Yelp/detect-secrets) and
   # [detect-secrets](https://github.com/Yelp/detect-secrets)
-  check-harcoded-credentials:
-    runs-on: ubuntu-latest
+  check-hardcoded-credentials:
     name: Check hardcoded credentials in files
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -132,9 +136,9 @@ jobs:
           fail_on_error: true
 
   linting:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
     name: 'Linting: black, flake8'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       DOCSTRING_REPORT: output/docstring_report.txt
     steps:
@@ -158,9 +162,9 @@ jobs:
           reporter: github-pr-review
           fail_on_error: true
   interrogate:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
     name: 'Docstrings coverage check (interrogate)'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       DOCSTRING_REPORT: output/docstring_report.txt
     steps:
@@ -209,9 +213,9 @@ jobs:
           exit 1
 
   mypy-typecheck:
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
     name: 'Mypy Type check'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: mypy type check
         uses: tsuyoshicho/action-mypy@v3
@@ -221,9 +225,9 @@ jobs:
           mypy_flags: '--config-file=setup.cfg'
 
   test-and-coverage:
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
     name: 'Pytest and Coverage'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       COVERAGE_OUTPUT_PATH: output/coverage.xml
     steps:
