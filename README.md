@@ -39,6 +39,7 @@ The expected layout is:
 ├── projectname                # Project directory - top level directory for project
 │   └── example.py
 ├── .codeclimate.yml           # Configuration file for codeclimate analysis
+├── .pre-commit-config.yaml    # pre-commit configuration file, see https://pre-commit.com
 ├── pyproject.toml             # Configuration file for black, interrogate & pytest
 ├── requirements-dev.txt       # Development requirements file
 ├── requirements.txt           # Requirements file
@@ -67,6 +68,9 @@ The expected layout is:
 
   It's a good idea to invoke the configured linting tools locally prior to creating the PR.
   ProTip: it is likely you can configure them in your IDE.
+  
+  You can also configure and use [pre-commit hooks](https://pre-commit.com/#plugins). \
+  Copy [.pre-commit-config.yaml](.pre-commit-config.yaml) to the root directory of your repo and follow the [installation](https://pre-commit.com/#installation) instructions to run it.
 
 Take the workflow for a spin by making a PR in your repo.
   - `black`, `flake8`, and `mypy` configurations are in [setup.cfg](setup.cfg); `interrogate`, and `pytest` are in [pyproject.toml](pyproject.toml); code climate configurations are in [.codeclimate.yml](.codeclimate.yml), update as needed.
