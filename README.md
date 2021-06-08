@@ -36,10 +36,10 @@ The expected layout is:
 ├── .github
 │   └── workflows              # Workflow directory for your workflow files
 │       └── pm-gh-actions.yml
-├── .pre-commit-config.yaml    # pre-commit configuration file, see https://pre-commit.com
 ├── projectname                # Project directory - top level directory for project
 │   └── example.py
 ├── .codeclimate.yml           # Configuration file for codeclimate analysis
+├── .pre-commit-config.yaml    # pre-commit configuration file, see https://pre-commit.com
 ├── pyproject.toml             # Configuration file for black, interrogate & pytest
 ├── requirements-dev.txt       # Development requirements file
 ├── requirements.txt           # Requirements file
