@@ -1,4 +1,4 @@
-black~=21.5b2
+black~=21.5b2  # pycharm error on this is ok
 coverage[toml]~=5.5
 interrogate~=1.4.0
 flake8~=3.9.2
