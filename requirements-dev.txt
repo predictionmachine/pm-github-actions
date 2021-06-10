@@ -1,10 +1,12 @@
-black~=21.5b2
+black~=21.5b2  # pycharm error on this is ok
 coverage[toml]~=5.5
 interrogate~=1.4.0
 flake8~=3.9.2
-mypy~=0.812
+mypy~=0.901
 pre-commit~=2.13.0
 pytest~=6.2.4
 pytest-cov~=2.12.1
 pytest-mock~=3.6.1
 pytest-xdist[psutil]~=2.2.1
+# use if you use requests
+# types-requests>=0.1.9
