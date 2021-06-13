@@ -1,12 +1,13 @@
-black~=21.5b2  # pycharm error on this is ok
+# pm-version 0.1.4
+black~=21.6b0  # pycharm error on this is ok
+# black_nbconvert~=0.2.0  # for notebooks
 coverage[toml]~=5.5
-interrogate~=1.4.0
 flake8~=3.9.2
-mypy~=0.901
+interrogate~=1.4.0
+mypy~=0.902
 pre-commit~=2.13.0
 pytest~=6.2.4
 pytest-cov~=2.12.1
 pytest-mock~=3.6.1
 pytest-xdist[psutil]~=2.2.1
-# use if you use requests
-# types-requests>=0.1.9
+# types-requests>=0.1.11  # if you use requests
