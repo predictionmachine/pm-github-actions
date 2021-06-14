@@ -214,6 +214,7 @@ jobs:
 
   mypy-typecheck:
     timeout-minutes: 30
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     name: 'Mypy Type check'
     steps:
