@@ -238,10 +238,11 @@ jobs:
           if [ requirements.txt ]; then pip install -r requirements.txt; fi
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: mypy type check
-        uses: tsuyoshicho/action-mypy@v3.0.1
+        uses: tsuyoshicho/action-mypy@v3
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           reporter: github-pr-review
+          mypy_flags: '--config-file=pyproject.toml'
           fail_on_error: true
 
   test-and-coverage:
