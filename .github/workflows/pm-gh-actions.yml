@@ -161,6 +161,7 @@ jobs:
           flake8_args: '--config=setup.cfg'
           reporter: github-pr-review
           fail_on_error: true
+
   interrogate:
     name: 'Docstrings coverage check (interrogate)'
     runs-on: ubuntu-latest
@@ -241,8 +242,9 @@ jobs:
         uses: tsuyoshicho/action-mypy@v3
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
+          level: info
           reporter: github-pr-review
-          mypy_flags: '--config-file=pyproject.toml'
+          # mypy_flags: '--config-file=pyproject.toml'
           fail_on_error: true
 
   test-and-coverage:
