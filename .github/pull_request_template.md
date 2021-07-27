@@ -1,27 +1,26 @@
 ## Description
-ClickUp [task] (<- add link)
+ClickUp [task](https://app.clickup.com/t/<!--replace comment with task id-->)
+<!--link to issue or description: Issue #-->
+<!--What functionality does this add/problem does this fix?-->
 
-What functionality does this add/problem does this address?
-Issue #<!--_link to issue or description_-->
+This is a <!--choose one: --> small/medium/large  change.
+<!-- add advice on what files to start the review with, where complex code is -->
 
-This is a [small/medium/large] <!--choose one--> change.
-[_advice on what files to start the review with, where complex code is_]
-
-- [ ] This PR part of a larger effort
-  - what will be addressed in separate PRs?
+<!-- uncomment below if it's true -->
+<!--
+This PR part of a larger effort:
+  - --> <!-- describe what will be addressed in separate PRs -->
 
 Have you added <!--keep relevant items-->:
-- [ ] TODO comments about the work not shipped in this PR
-- [ ] TODO comments about nice to have refactoring
-- [ ] doc strings and comments about design decisions and approach taken/not taken
 
 
 ## Checklist
-- [ ] Does the PR have an informative, carefully chosen **title**?
-- [ ] Updated README.md and inline documentation as appropriate
-- [ ] New files have copyright statement at the top and a careful, useful description of what the file does
-- [x] Have you followed the other [Coding standards](https://github.com/predictionmachine/pm-coding-template#code-contents)?
+- [ ] Set an informative, carefully chosen **title**
 - [ ] Applied *labels* to the PR
+- [ ] Updated README.md and inline documentation as appropriate
+- [ ] Followed [Coding standards](https://github.com/predictionmachine/pm-coding-template#code-contents)
+- [ ] Added TODO comments about the work not shipped in this PR
+- [ ] Documented bugs/issues you had to work around
 
-<!-- version 0.3.1 -->
+<!-- version 0.4.0 -->
 <!-- based on https://github.com/predictionmachine/pm-coding-template/blob/main/.github/pull_request_template.md -->
