@@ -3,16 +3,13 @@ ClickUp [task](https://app.clickup.com/t/<!--replace comment with task id-->)
 <!--link to issue or description: Issue #-->
 <!--What functionality does this add/problem does this fix?-->
 
-This is a <!--choose one: --> small/medium/large  change.
+This is a <!--choose one: --> small/medium/large change.
 <!-- add advice on what files to start the review with, where complex code is -->
 
-<!-- uncomment below if it's true -->
+<!-- uncomment below if it's true, delete otherwise -->
 <!--
 This PR part of a larger effort:
   - --> <!-- describe what will be addressed in separate PRs -->
-
-Have you added <!--keep relevant items-->:
-
 
 ## Checklist
 - [ ] Set an informative, carefully chosen **title**
