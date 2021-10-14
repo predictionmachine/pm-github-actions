@@ -11,8 +11,10 @@ on:
     secrets:
       CC_TEST_REPORTER_ID:
         description: 'a repo-specific test reporter id provided by Codeclimate for submitting coverage report'
+        required: true
       CODECOV_TOKEN:
         description: 'a repo-specific token for uploading coverage reports to Codcov'
+        required: true
   push:
     branches:
       - dev
@@ -30,14 +32,14 @@ env:
 
 jobs:
   # Check branch name standard as per `pm-coding-template`
-  # Ref: https://github.com/predictionmachine/pm-coding-template#github-branches-pull-requests
+  # Reference: https://github.com/predictionmachine/pm-coding-template/blob/main/docs/coding-standard.md#github-branches-pull-requests
   check-branch-naming-convention:
     name: Check branch naming convention as per pm-coding-template
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: ${{ github.event_name == 'pull_request' }}
     env:
-      BRANCH_NAME_RULE: 'https://github.com/predictionmachine/pm-coding-template#github-branches-pull-requests'
+      BRANCH_NAME_RULE: 'https://github.com/predictionmachine/pm-coding-template/blob/main/docs/coding-standard.md#github-branches-pull-requests'
     steps:
       - name: Check branch name
         id: branchCheck
@@ -68,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      TEMPLATE_URL: 'https://github.com/predictionmachine/pm-coding-template/blob/main/.github/pull_request_template.md'
+      TEMPLATE_URL: 'https://github.com/predictionmachine/.github/blob/main/.github/pull_request_template.md'
     steps:
       - name: Check PR description
         if: ${{ github.event_name == 'pull_request' }}
@@ -123,6 +125,22 @@ jobs:
             Please remove unwanted files from the repo.
             Here is the detected file path: ${{ steps.fileCheck.outputs.file_paths }}
             Please make sure you have followed our [contributing guidelines](${{ env.GUIDELINE_REPO }}).
+
+  # see [reviewdog/action-detect-secrets](https://github.com/Yelp/detect-secrets) and
+  # [detect-secrets](https://github.com/Yelp/detect-secrets)
+  check-hardcoded-credentials:
+    name: Check hardcoded credentials in files
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: detect-secrets
+        uses: reviewdog/action-detect-secrets@master
+        with:
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          reporter: github-pr-review
+          fail_on_error: false
 
   linting:
     name: 'Linting: black, flake8'
