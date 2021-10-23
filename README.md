@@ -54,8 +54,31 @@ The expected layout is:
 ## Installation:
 
 - Copy and paste
-  [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) and relevant config files
-  into your repo.
+  [pm-gh-actions.yml](.github/workflows/pm-gh-actions.yml) and relevant config files. OR call this workflow as one of the jobs under your repo's workflow - this workflow is [reusable workflow](https://docs.github.com/en/actions/learn-github-actions/reusing-workflows), so you can call this from your workflow as followed:
+
+  ```YAML
+  # file: caller_workflow_name.yaml
+
+  name: CI workflow
+  on:
+    push:
+      branches:
+        - main
+    pull_request:
+      types:
+        - opened
+      branches:
+        - main
+
+  jobs:
+    # reference: https://docs.github.com/en/actions/learn-github-actions/reusing-workflows#example-caller-workflow
+    org-checks:
+      uses: predictionmachine/pm-github-actions/.github/workflows/pm-gh-actions.yml@main
+      secrets:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  ```
+
 - Set a couple of secrets:
   - `CC_TEST_REPORTER_ID` (a repo-specific id provided by Codeclimate)
   See [finding your test coverage token](https://docs.codeclimate.com/docs/finding-your-test-coverage-token).
@@ -68,7 +91,7 @@ The expected layout is:
 
   It's a good idea to invoke the configured linting tools locally prior to creating the PR.
   ProTip: it is likely you can configure them in your IDE.
-  
+
   You can also configure and use [pre-commit hooks](https://pre-commit.com/#plugins). \
   Copy [.pre-commit-config.yaml](.pre-commit-config.yaml) to the root directory of your repo and follow the [installation](https://pre-commit.com/#installation) instructions to run it.
 
@@ -175,5 +198,5 @@ If you want to pass additional args, change location of config file, proceed as 
  For more details please see [reviewdog/action-detect-secrets](https://github.com/reviewdog/action-detect-secrets) and [detect-secrets](https://github.com/Yelp/detect-secrets)
 
 - - -
-<!-- TODO: update to new website when ready -->
-Developed and used by [Prediction Machine](https://github.com/predictionmachine).
+
+Developed and used by [Prediction Machine](https://predmachine.com/).
