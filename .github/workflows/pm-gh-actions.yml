@@ -2,11 +2,19 @@
 # Copyright (C) 2021 Prediction Machine Advisers, LLC
 # This file is available under MIT license
 # based on https://github.com/predictionmachine/pm-github-actions/blob/main/.github/workflows/pm-gh-actions.yml
-# pm-version 0.3.10
+# pm-version 0.4.0
 ############################################################################################
 
 name: PM CI workflow
 on:
+  workflow_call:  # enables this workflow to be reusable for other repo. See: https://docs.github.com/en/actions/learn-github-actions/reusing-workflows
+    secrets:
+      CC_TEST_REPORTER_ID:
+        description: 'a repo-specific test reporter id provided by Codeclimate for submitting coverage report'
+        required: true
+      CODECOV_TOKEN:
+        description: 'a repo-specific token for uploading coverage reports to Codcov'
+        required: true
   push:
     branches:
       - dev
@@ -16,7 +24,6 @@ on:
       - opened
       - edited
       - reopened
-      - synchronize
     branches:
       - main
       - dev
@@ -25,14 +32,14 @@ env:
 
 jobs:
   # Check branch name standard as per `pm-coding-template`
-  # Ref: https://github.com/predictionmachine/pm-coding-template#github-branches-pull-requests
+  # Reference: https://github.com/predictionmachine/pm-coding-template/blob/main/docs/coding-standard.md#github-branches-pull-requests
   check-branch-naming-convention:
     name: Check branch naming convention as per pm-coding-template
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: ${{ github.event_name == 'pull_request' }}
     env:
-      BRANCH_NAME_RULE: 'https://github.com/predictionmachine/pm-coding-template#github-branches-pull-requests'
+      BRANCH_NAME_RULE: 'https://github.com/predictionmachine/pm-coding-template/blob/main/docs/coding-standard.md#github-branches-pull-requests'
     steps:
       - name: Check branch name
         id: branchCheck
@@ -63,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      TEMPLATE_URL: 'https://github.com/predictionmachine/pm-coding-template/blob/main/.github/pull_request_template.md'
+      TEMPLATE_URL: 'https://github.com/predictionmachine/.github/blob/main/.github/pull_request_template.md'
     steps:
       - name: Check PR description
         if: ${{ github.event_name == 'pull_request' }}
@@ -133,7 +140,7 @@ jobs:
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           reporter: github-pr-review
-          fail_on_error: true
+          fail_on_error: false
 
   linting:
     name: 'Linting: black, flake8'
@@ -192,7 +199,7 @@ jobs:
           echo "::set-output name=passed_or_failed::$passed_or_failed"
       - name: Reformat docstring report
         run: |
-          sed -i "s!^=.*!## Docstring Coverage :memo:!" "$DOCSTRING_REPORT"
+          sed -i "s!^==*!## Docstring Coverage :memo:!" "$DOCSTRING_REPORT"
           sed -i "s!.*-- Summary --.*!\n<details><summary>docstring coverage details</summary>\n!" "$DOCSTRING_REPORT"
           sed -i "s!.*-- RESULT:!</details>\n\n!" "$DOCSTRING_REPORT"
           sed -i "s!) --.*!)!" "$DOCSTRING_REPORT"
@@ -238,14 +245,16 @@ jobs:
           python -m pip install --upgrade pip
           if [ requirements.txt ]; then pip install -r requirements.txt; fi
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-      - name: mypy type check
+      - name: mypy type check - reviewdog
         uses: tsuyoshicho/action-mypy@v3
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
-          level: info
           reporter: github-pr-review
-          # mypy_flags: '--config-file=pyproject.toml'
-          fail_on_error: true
+          level: warning  # to prevent failing without error
+          # fail_on_error: true
+      - name: mypy type check
+        run: |
+          python -m mypy
 
   test-and-coverage:
     name: 'Pytest and Coverage'
@@ -275,7 +284,7 @@ jobs:
           if [ requirements.txt ]; then pip install -r requirements.txt; fi
           if [ requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: Test with pytest and generate cov
-        # see also https://pytest-cov.readthedocs.io/en/latest/config.html
+        # see also https://pytest-cov.readthedocs.io/en/latest/config.html#caveats
         run: |
           python -m pytest --cov-report xml:$COVERAGE_OUTPUT_PATH --cov=. --cov-config=pyproject.toml \
             --continue-on-collection-errors --no-cov-on-fail
